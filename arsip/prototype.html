@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>RubyRa Hotel — Desktop Clickable Prototype</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #1F1F1F;
+    color: #111827;
+    line-height: 1.4;
+    min-height: 100vh;
+    padding: 24px;
+  }
+  a { text-decoration: none; color: inherit; cursor: pointer; }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ====== SCREEN VISIBILITY ====== */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ====== CANVAS ====== */
+  .canvas {
+    max-width: 1180px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border: 2px solid #111;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* ====== HEADER ====== */
+  .header {
+    background: #E6F0F4;
+    display: flex;
+    align-items: center;
+    padding: 14px 30px;
+    border-bottom: 2px solid #111;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 60px;
+    cursor: pointer;
+  }
+  .logo-icon {
+    width: 52px;
+    height: 52px;
+    background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #F3F4F6 60%, #D1D5DB 100%);
+    border: 2px solid #C2410C;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #B91C1C;
+    font-family: 'Brush Script MT', cursive;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .logo-text {
+    font-family: 'Brush Script MT', 'Segoe Script', cursive;
+    font-size: 24px;
+    color: #B91C1C;
+    line-height: 1;
+  }
+  .logo-text small {
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    color: #6B7280;
+    letter-spacing: 4px;
+    margin-top: 2px;
+  }
+  .nav {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    gap: 0;
+    font-weight: 700;
+    color: #111827;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+  }
+  .nav a {
+    padding: 8px 24px;
+    border-right: 2px solid #D1D5DB;
+  }
+  .nav a:last-child { border-right: none; }
+  .nav a:hover, .nav a.active { color: #DC2626; }
+  .header-actions { display: flex; gap: 10px; }
+  .btn-red {
+    background: #E11D48;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 11px 28px;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .btn-red:hover { background: #BE123C; }
+  .btn-outline {
+    background: #fff;
+    color: #E11D48;
+    border: 2px solid #E11D48;
+    border-radius: 30px;
+    padding: 9px 26px;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+
+  /* ====== HOME — Hero + Search + Categories ====== */
+  .hero {
+    position: relative;
+    margin: 22px 28px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #BAE6FD 0%, #7DD3FC 50%, #38BDF8 100%);
+    border: 1.5px solid #111;
+    padding: 22px 28px 36px;
+  }
+  .mountains { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .mountains::before, .mountains::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: 55%;
+    height: 75%;
+    background: linear-gradient(180deg, #6B7280 0%, #4B5563 60%, #374151 100%);
+    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+    opacity: 0.85;
+  }
+  .mountains::before { left: -8%; }
+  .mountains::after  { right: -8%; height: 65%; background: linear-gradient(180deg, #9CA3AF 0%, #6B7280 60%, #4B5563 100%); }
+  .mountain-mid {
+    position: absolute; bottom: 0; left: 30%; width: 45%; height: 60%;
+    background: linear-gradient(180deg, #78716C 0%, #57534E 70%, #44403C 100%);
+    clip-path: polygon(0% 100%, 50% 5%, 100% 100%); opacity: 0.9;
+  }
+  .ground { position: absolute; bottom: 0; left: 0; right: 0; height: 28px; background: linear-gradient(180deg, #4ADE80 0%, #16A34A 100%); }
+
+  .search-bar {
+    position: relative;
+    background: #fff;
+    border-radius: 40px;
+    padding: 13px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    font-size: 14px;
+    z-index: 2;
+    cursor: pointer;
+  }
+  .search-bar input { border: none; outline: none; flex: 1; font-size: 14px; color: #111827; background: transparent; cursor: pointer; }
+
+  .categories {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 32px;
+    z-index: 2;
+  }
+  .cat { flex: 1; text-align: center; cursor: pointer; }
+  .cat-circle {
+    width: 90px; height: 90px;
+    border-radius: 50%; margin: 0 auto;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px;
+    transition: transform 0.2s;
+  }
+  .cat:hover .cat-circle { transform: translateY(-4px); }
+  .c-hotel    { background: linear-gradient(180deg, #FDBA74 0%, #F97316 100%); }
+  .c-guest    { background: linear-gradient(180deg, #FECACA 0%, #F87171 100%); }
+  .c-villa    { background: linear-gradient(180deg, #BAE6FD 0%, #7DD3FC 100%); }
+  .c-apart    { background: linear-gradient(180deg, #FED7AA 0%, #FB923C 100%); }
+  .c-resort   { background: linear-gradient(180deg, #FECACA 0%, #FCA5A5 100%); }
+  .c-homestay { background: linear-gradient(180deg, #BBF7D0 0%, #4ADE80 100%); }
+  .cat-label { margin-top: 10px; font-size: 12px; font-weight: 800; color: #FFFFFF; letter-spacing: 1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.4); }
+
+  /* ====== HOME Two Column ====== */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin: 26px 28px 26px;
+  }
+  .panel { border: 1.5px solid #111; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; max-height: 480px; }
+  .panel-title { text-align: center; font-size: 20px; font-weight: 800; padding: 16px 0 10px; letter-spacing: 1px; }
+  .panel.recommended { background: #FEF3C7; }
+  .panel.deals { background: #FCE7F3; }
+  .stay-list, .deal-list { flex: 1; overflow-y: auto; padding: 6px 16px 16px; }
+  .stay-list::-webkit-scrollbar, .deal-list::-webkit-scrollbar { width: 8px; }
+  .stay-list::-webkit-scrollbar-track { background: #FDE68A; }
+  .deal-list::-webkit-scrollbar-track { background: #FBCFE8; }
+  .stay-list::-webkit-scrollbar-thumb, .deal-list::-webkit-scrollbar-thumb { background: #3B82F6; border-radius: 8px; }
+
+  .stay {
+    background: #FFFFFF; border: 1.5px solid #111; border-radius: 6px;
+    padding: 10px 12px; margin-bottom: 10px;
+    display: flex; gap: 12px; align-items: center;
+    cursor: pointer;
+  }
+  .stay:hover { background: #FEF9C3; }
+  .stay-thumb {
+    width: 60px; height: 50px; border-radius: 4px;
+    background: linear-gradient(135deg, #94A3B8, #475569);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: #fff;
+  }
+  .stay-thumb.t2 { background: linear-gradient(135deg, #92400E, #57534E); }
+  .stay-thumb.t3 { background: linear-gradient(135deg, #FCD34D, #B45309); }
+  .stay-thumb.t4 { background: linear-gradient(135deg, #6EE7B7, #047857); }
+  .stay-thumb.t5 { background: linear-gradient(135deg, #93C5FD, #1E40AF); }
+  .stay-thumb.t6 { background: linear-gradient(135deg, #F9A8D4, #BE185D); }
+  .stay-thumb.t7 { background: linear-gradient(135deg, #C4B5FD, #6D28D9); }
+  .stay-info { flex: 1; }
+  .stay-name { font-size: 14px; font-weight: 700; }
+  .stars { color: #F59E0B; font-size: 13px; letter-spacing: 1px; }
+  .stay-meta { font-size: 11px; color: #4B5563; margin-top: 2px; }
+  .stay-meta span { display: block; }
+
+  .deal-card {
+    background: #FFFFFF; border: 1.5px solid #111; border-radius: 6px;
+    padding: 14px 18px 16px; margin-bottom: 12px;
+  }
+  .deal-title { text-align: center; font-size: 16px; font-weight: 700; margin-bottom: 5px; }
+  .deal-title .pct { color: #DC2626; font-weight: 800; }
+  .deal-sub { text-align: center; font-size: 12px; color: #374151; margin-bottom: 12px; }
+  .deal-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 8px; }
+  .deal-bullets { font-size: 12px; color: #374151; line-height: 1.7; }
+  .deal-bullets li { list-style: disc inside; }
+  .btn-book {
+    background: #E11D48; color: #fff; border: none; border-radius: 24px;
+    padding: 9px 20px; font-weight: 800; font-size: 12px; letter-spacing: 1px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15); white-space: nowrap;
+  }
+  .btn-book:hover { background: #BE123C; }
+
+  /* ====== AUTH (Login & Signup) ====== */
+  .auth-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: 600px;
+  }
+  .auth-illustration {
+    background: linear-gradient(135deg, #FCA5A5 0%, #DC2626 60%, #991B1B 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; text-align: center; padding: 40px;
+    position: relative; overflow: hidden;
+  }
+  .auth-illustration::before {
+    content: '🏨';
+    font-size: 180px;
+    opacity: 0.15;
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+  }
+  .auth-illustration h2 {
+    font-size: 32px; font-weight: 800; margin-bottom: 14px;
+    font-family: 'Brush Script MT', cursive;
+    z-index: 1; position: relative;
+  }
+  .auth-illustration p { font-size: 15px; opacity: 0.95; z-index: 1; position: relative; }
+
+  .auth-form {
+    padding: 50px 60px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .auth-title { font-size: 28px; font-weight: 800; color: #1F2937; }
+  .auth-sub { font-size: 14px; color: #6B7280; margin-top: 6px; margin-bottom: 26px; }
+  .input-label { font-size: 12px; color: #6B7280; margin-top: 12px; margin-bottom: 6px; font-weight: 700; }
+  .input-box {
+    width: 100%; border: 1.5px solid #D1D5DB; border-radius: 8px;
+    padding: 12px 14px; font-size: 14px; background: #F9FAFB; color: #1F2937;
+  }
+  .input-box:focus { outline: none; border-color: #DC2626; background: #fff; }
+  .forgot { text-align: right; font-size: 12px; color: #DC2626; margin-top: 6px; font-weight: 600; }
+  .btn-primary {
+    background: #DC2626; color: #fff; border: none; border-radius: 30px;
+    padding: 13px; font-size: 15px; font-weight: 800; letter-spacing: 1px;
+    width: 100%; margin-top: 20px;
+  }
+  .btn-primary:hover { background: #B91C1C; }
+  .divider { text-align: center; color: #9CA3AF; font-size: 12px; margin: 18px 0 12px; position: relative; }
+  .divider::before, .divider::after { content: ''; height: 1px; background: #E5E7EB; width: 40%; position: absolute; top: 50%; }
+  .divider::before { left: 0; } .divider::after { right: 0; }
+  .social-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .social-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    border: 1.5px solid #E5E7EB; border-radius: 8px; padding: 11px;
+    font-size: 13px; font-weight: 600; background: #fff;
+  }
+  .social-btn:hover { background: #F3F4F6; }
+  .auth-footer { text-align: center; font-size: 13px; color: #6B7280; margin-top: 18px; }
+  .auth-footer a { color: #DC2626; font-weight: 700; }
+  .checkbox-row { display: flex; align-items: flex-start; gap: 8px; margin-top: 14px; font-size: 12px; color: #4B5563; }
+
+  /* ====== SEARCH RESULTS / Hotel List ====== */
+  .results-header {
+    background: linear-gradient(135deg, #BAE6FD 0%, #38BDF8 100%);
+    padding: 22px 30px;
+    border-bottom: 2px solid #111;
+  }
+  .results-search {
+    background: #fff; border-radius: 40px; padding: 14px 22px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15); max-width: 700px; margin: 0 auto;
+  }
+  .results-search input { border: none; outline: none; flex: 1; font-size: 14px; }
+
+  .results-body { display: grid; grid-template-columns: 250px 1fr; gap: 22px; padding: 24px 28px; }
+  .filter-side {
+    background: #F9FAFB; border: 1.5px solid #111; border-radius: 8px;
+    padding: 16px;
+    height: fit-content;
+  }
+  .filter-side h3 { font-size: 14px; font-weight: 800; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1.5px dashed #D1D5DB; }
+  .filter-group { margin-bottom: 14px; }
+  .filter-group .lbl { font-size: 12px; font-weight: 700; color: #1F2937; margin-bottom: 6px; }
+  .filter-group label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #4B5563; padding: 4px 0; cursor: pointer; }
+  .chips-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .chip {
+    background: #F3F4F6; color: #1F2937; padding: 5px 12px;
+    border-radius: 20px; font-size: 11px; font-weight: 600;
+    border: 1px solid #E5E7EB; cursor: pointer;
+  }
+  .chip.active { background: #DC2626; color: #fff; border-color: #DC2626; }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .hotel-row {
+    display: grid; grid-template-columns: 180px 1fr 160px; gap: 16px;
+    background: #fff; border: 1.5px solid #111; border-radius: 8px;
+    padding: 12px; cursor: pointer;
+    transition: box-shadow 0.2s;
+  }
+  .hotel-row:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .hotel-row .img {
+    height: 130px; border-radius: 6px;
+    background: linear-gradient(135deg, #FCA5A5, #DC2626);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; color: #fff;
+  }
+  .hotel-row .img.v2 { background: linear-gradient(135deg, #FDBA74, #F59E0B); }
+  .hotel-row .img.v3 { background: linear-gradient(135deg, #A78BFA, #7C3AED); }
+  .hotel-row .img.v4 { background: linear-gradient(135deg, #6EE7B7, #059669); }
+  .hotel-row .img.v5 { background: linear-gradient(135deg, #93C5FD, #1E40AF); }
+  .hotel-row .info .name { font-size: 16px; font-weight: 800; color: #1F2937; }
+  .hotel-row .info .name .tag { background: #DC2626; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+  .hotel-row .info .rating { font-size: 12px; color: #6B7280; margin-top: 4px; }
+  .hotel-row .info .meta { font-size: 12px; color: #6B7280; margin-top: 3px; }
+  .hotel-row .info .amenities { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .hotel-row .info .amenities span { background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 11px; color: #4B5563; }
+  .hotel-row .right { text-align: right; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; }
+  .hotel-row .right .strikethrough { font-size: 12px; color: #9CA3AF; text-decoration: line-through; }
+  .hotel-row .right .price { font-size: 18px; font-weight: 800; color: #DC2626; }
+  .hotel-row .right .per { font-size: 11px; color: #6B7280; }
+
+  /* ====== DETAIL HOTEL ====== */
+  .detail-hero {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 200px 200px;
+    gap: 6px;
+    padding: 22px 28px 0;
+  }
+  .detail-hero > div {
+    border-radius: 8px;
+    background: linear-gradient(135deg, #FCA5A5, #DC2626);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 60px; color: #fff;
+  }
+  .detail-hero > div:first-child { grid-row: span 2; font-size: 100px; }
+  .detail-hero > div:nth-child(2) { background: linear-gradient(135deg, #FDBA74, #F59E0B); }
+  .detail-hero > div:nth-child(3) { background: linear-gradient(135deg, #A78BFA, #7C3AED); }
+  .detail-hero > div:nth-child(4) { background: linear-gradient(135deg, #6EE7B7, #059669); }
+  .detail-hero > div:nth-child(5) { background: linear-gradient(135deg, #93C5FD, #1E40AF); position: relative; }
+  .more-photos {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 16px; font-weight: 700; border-radius: 8px;
+  }
+
+  .detail-body { display: grid; grid-template-columns: 1fr 320px; gap: 26px; padding: 24px 28px; }
+  .detail-main h1 { font-size: 28px; font-weight: 800; }
+  .detail-main .rating-row { display: flex; align-items: center; gap: 14px; margin-top: 8px; font-size: 14px; color: #6B7280; }
+  .detail-main .rating-row .score { background: #059669; color: #fff; padding: 3px 8px; border-radius: 4px; font-weight: 800; }
+  .detail-main .location { font-size: 13px; color: #6B7280; margin-top: 8px; }
+  .detail-main .tabs { display: flex; border-bottom: 2px solid #E5E7EB; margin-top: 18px; }
+  .detail-main .tab { padding: 12px 22px; font-weight: 700; font-size: 14px; color: #6B7280; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+  .detail-main .tab.active { color: #DC2626; border-bottom-color: #DC2626; }
+  .detail-main h2 { font-size: 18px; font-weight: 800; margin-top: 22px; margin-bottom: 12px; }
+  .detail-main p.desc { font-size: 13px; color: #4B5563; line-height: 1.7; }
+  .amenities-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .amenities-grid div { font-size: 13px; color: #1F2937; display: flex; align-items: center; gap: 8px; }
+
+  .room-card {
+    background: #fff; border: 1.5px solid #111; border-radius: 8px;
+    padding: 14px; margin-bottom: 12px;
+    display: grid; grid-template-columns: 120px 1fr 140px; gap: 14px;
+  }
+  .room-card .img {
+    height: 100px; border-radius: 6px; background: linear-gradient(135deg, #FCA5A5, #DC2626);
+    display: flex; align-items: center; justify-content: center; font-size: 38px; color: #fff;
+  }
+  .room-card .img.v2 { background: linear-gradient(135deg, #FDBA74, #F59E0B); }
+  .room-card .img.v3 { background: linear-gradient(135deg, #A78BFA, #7C3AED); }
+  .room-card .name { font-size: 15px; font-weight: 800; }
+  .room-card .feat { font-size: 12px; color: #6B7280; margin-top: 4px; }
+  .room-card .feat span { display: inline-block; margin-right: 10px; }
+  .room-card .right { text-align: right; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; }
+  .room-card .right .price { font-size: 16px; font-weight: 800; color: #DC2626; }
+  .room-card .right .per { font-size: 10px; color: #6B7280; }
+  .btn-pick {
+    background: #E11D48; color: #fff; border: none; border-radius: 20px;
+    padding: 8px 18px; font-weight: 800; font-size: 12px; letter-spacing: 1px;
+  }
+  .btn-pick:hover { background: #BE123C; }
+
+  .booking-aside {
+    background: #FEF3C7;
+    border: 1.5px solid #111;
+    border-radius: 8px;
+    padding: 18px;
+    position: sticky;
+    top: 24px;
+    align-self: start;
+  }
+  .booking-aside h3 { font-size: 16px; font-weight: 800; margin-bottom: 12px; }
+  .booking-aside .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #D1D5DB; font-size: 13px; }
+  .booking-aside .row:last-child { border-bottom: none; }
+  .booking-aside .row .lbl { color: #6B7280; }
+  .booking-aside .row .val { font-weight: 700; }
+  .booking-aside .total { font-size: 18px; font-weight: 800; color: #DC2626; }
+
+  /* ====== BOOKING FORM ====== */
+  .page-title-bar {
+    background: #FEF3C7; padding: 18px 30px; border-bottom: 2px solid #111;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .back-link { font-size: 22px; cursor: pointer; }
+  .page-title-bar h1 { font-size: 20px; font-weight: 800; }
+  .steps { display: flex; align-items: center; gap: 12px; margin-left: auto; font-size: 13px; }
+  .steps .step { display: flex; align-items: center; gap: 6px; color: #6B7280; }
+  .steps .step.active { color: #DC2626; font-weight: 700; }
+  .steps .step .n {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #D1D5DB; color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .steps .step.active .n { background: #DC2626; }
+  .steps .step.done .n { background: #059669; }
+
+  .booking-body { display: grid; grid-template-columns: 1fr 380px; gap: 26px; padding: 24px 28px; }
+  .booking-main h2 { font-size: 18px; font-weight: 800; margin-bottom: 14px; }
+  .booking-section {
+    background: #fff; border: 1.5px solid #111; border-radius: 8px;
+    padding: 18px; margin-bottom: 16px;
+  }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-grid.full { grid-template-columns: 1fr; }
+  .form-field label { font-size: 12px; font-weight: 700; color: #4B5563; display: block; margin-bottom: 6px; }
+  .form-field input, .form-field select {
+    width: 100%; border: 1.5px solid #D1D5DB; border-radius: 6px;
+    padding: 10px 12px; font-size: 13px; background: #F9FAFB;
+  }
+  .stepper-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+  .stepper-row .lbl { font-size: 14px; font-weight: 700; }
+  .stepper-row .lbl small { display: block; font-size: 11px; color: #6B7280; font-weight: 400; }
+  .stepper { display: flex; align-items: center; gap: 14px; }
+  .stepper-btn {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #FEE2E2; color: #DC2626; border: none; font-weight: 800; font-size: 18px;
+  }
+  .stepper .count { font-weight: 800; min-width: 24px; text-align: center; font-size: 16px; }
+
+  .booking-summary {
+    background: #FCE7F3; border: 1.5px solid #111; border-radius: 8px;
+    padding: 18px;
+    position: sticky; top: 24px; align-self: start;
+  }
+  .booking-summary h3 { font-size: 16px; font-weight: 800; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1.5px dashed #D1D5DB; }
+  .booking-summary .row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+  .booking-summary .row .lbl { color: #6B7280; }
+  .booking-summary .row.total {
+    border-top: 1.5px dashed #D1D5DB; margin-top: 8px; padding-top: 10px;
+    font-size: 16px; font-weight: 800; color: #DC2626;
+  }
+
+  /* ====== PAYMENT ====== */
+  .pay-method-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  .pay-method {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border: 1.5px solid #D1D5DB; border-radius: 8px;
+    cursor: pointer; background: #fff;
+  }
+  .pay-method:hover { border-color: #DC2626; }
+  .pay-method.selected { border-color: #DC2626; background: #FEF2F2; }
+  .pay-radio {
+    width: 18px; height: 18px; border-radius: 50%; border: 2px solid #D1D5DB;
+    position: relative; flex-shrink: 0;
+  }
+  .pay-method.selected .pay-radio { border-color: #DC2626; }
+  .pay-method.selected .pay-radio::after {
+    content: ''; position: absolute; width: 10px; height: 10px;
+    border-radius: 50%; background: #DC2626;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+  }
+  .pay-icon { font-size: 26px; }
+  .pay-info .name { font-size: 14px; font-weight: 700; }
+  .pay-info .sub { font-size: 11px; color: #6B7280; margin-top: 2px; }
+
+  .promo-input {
+    margin-top: 16px;
+    border: 1.5px dashed #DC2626; border-radius: 8px;
+    padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+    background: #FEF2F2;
+  }
+  .promo-input input { flex: 1; border: none; outline: none; background: transparent; font-size: 13px; }
+  .btn-apply { background: #DC2626; color: #fff; border: none; border-radius: 20px; padding: 7px 18px; font-weight: 700; font-size: 12px; }
+
+  /* ====== MY BOOKINGS ====== */
+  .booking-page-tabs { display: flex; gap: 0; border-bottom: 2px solid #E5E7EB; padding: 0 30px; background: #fff; }
+  .booking-page-tabs .tab {
+    padding: 16px 28px; font-weight: 700; font-size: 14px;
+    color: #6B7280; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px;
+  }
+  .booking-page-tabs .tab.active { color: #DC2626; border-bottom-color: #DC2626; }
+
+  .bookings-list { padding: 24px 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .booking-item {
+    background: #fff; border: 1.5px solid #111; border-radius: 8px;
+    padding: 16px; display: flex; gap: 14px;
+  }
+  .booking-item .img {
+    width: 100px; height: 100px; border-radius: 8px;
+    background: linear-gradient(135deg, #FCA5A5, #DC2626);
+    display: flex; align-items: center; justify-content: center; font-size: 38px; color: #fff;
+    flex-shrink: 0;
+  }
+  .booking-item .img.v2 { background: linear-gradient(135deg, #FDBA74, #F59E0B); }
+  .booking-item .img.v3 { background: linear-gradient(135deg, #A78BFA, #7C3AED); }
+  .booking-item .img.v4 { background: linear-gradient(135deg, #6EE7B7, #059669); }
+  .booking-item .info { flex: 1; }
+  .booking-item .name { font-size: 15px; font-weight: 800; }
+  .booking-item .room { font-size: 12px; color: #6B7280; margin-top: 2px; }
+  .booking-item .status {
+    display: inline-block; font-size: 10px; font-weight: 800;
+    padding: 3px 10px; border-radius: 10px; margin-top: 6px; letter-spacing: 0.5px;
+  }
+  .status-confirmed { background: #D1FAE5; color: #059669; }
+  .status-pending { background: #FEF3C7; color: #B45309; }
+  .status-completed { background: #DBEAFE; color: #1D4ED8; }
+  .booking-item .dates { font-size: 12px; color: #4B5563; margin-top: 6px; }
+  .booking-item .total { font-size: 14px; font-weight: 800; margin-top: 4px; color: #1F2937; }
+  .booking-actions-row { display: flex; gap: 8px; margin-top: 10px; }
+  .btn-mini {
+    flex: 1; padding: 7px; border-radius: 16px;
+    font-size: 11px; font-weight: 700; text-align: center;
+    border: 1.5px solid #DC2626; color: #DC2626; background: #fff;
+    cursor: pointer;
+  }
+  .btn-mini:hover { background: #FEF2F2; }
+  .btn-mini.solid { background: #DC2626; color: #fff; }
+  .btn-mini.solid:hover { background: #B91C1C; }
+
+  /* ====== Floating helper / dev nav ====== */
+  .dev-nav {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    background: #111;
+    color: #fff;
+    border-radius: 12px;
+    padding: 8px;
+    z-index: 999;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    font-size: 11px;
+    max-width: 200px;
+  }
+  .dev-nav-title {
+    color: #FBBF24;
+    font-weight: 800;
+    padding: 6px 10px;
+    text-align: center;
+    border-bottom: 1px solid #374151;
+    margin-bottom: 4px;
+  }
+  .dev-nav button {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: #D1D5DB;
+    border: none;
+    text-align: left;
+    padding: 6px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+  .dev-nav button:hover { background: #1F2937; color: #fff; }
+  .dev-nav button.active { background: #DC2626; color: #fff; font-weight: 700; }
+
+  .footnote { text-align: center; color: #9CA3AF; font-size: 12px; margin-top: 18px; }
+
+  /* Toast */
+  .toast {
+    position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
+    background: #059669; color: #fff;
+    padding: 14px 28px; border-radius: 8px;
+    font-size: 14px; font-weight: 600;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(10px); }
+</style>
+</head>
+<body>
+
+<!-- ====================== SCREEN 1: HOME ====================== -->
+<div class="screen active" id="screen-home">
+  <div class="canvas">
+
+    <div class="header">
+      <div class="logo" onclick="go('home')">
+        <div class="logo-icon">R</div>
+        <div class="logo-text">RubyRa<small>HOTEL</small></div>
+      </div>
+      <nav class="nav">
+        <a onclick="toast('Help Center')">HELP CENTER</a>
+        <a onclick="toast('Wishlist (kosong)')">WISHLIST</a>
+        <a onclick="go('bookings')">MY BOOKINGS</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn-red" onclick="go('login')">LOGIN</button>
+        <button class="btn-red" onclick="go('signup')">SIGN UP</button>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="mountains"></div>
+      <div class="mountain-mid"></div>
+      <div class="ground"></div>
+
+      <div class="search-bar" onclick="go('results')">
+        🔍 <input type="text" placeholder="Search..." readonly>
+      </div>
+
+      <div class="categories">
+        <div class="cat" onclick="filterByCategory('hotel')"><div class="cat-circle c-hotel">🏨</div><div class="cat-label">HOTELS</div></div>
+        <div class="cat" onclick="filterByCategory('guest')"><div class="cat-circle c-guest">🏠</div><div class="cat-label">GUEST HOUSE</div></div>
+        <div class="cat" onclick="filterByCategory('villa')"><div class="cat-circle c-villa">🏡</div><div class="cat-label">VILLA</div></div>
+        <div class="cat" onclick="filterByCategory('apart')"><div class="cat-circle c-apart">🏢</div><div class="cat-label">APARTMENT</div></div>
+        <div class="cat" onclick="filterByCategory('resort')"><div class="cat-circle c-resort">🌴</div><div class="cat-label">RESORT</div></div>
+        <div class="cat" onclick="filterByCategory('homestay')"><div class="cat-circle c-homestay">🏘️</div><div class="cat-label">HOMESTAY</div></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel recommended">
+        <div class="panel-title">RECOMMENDED STAYS</div>
+        <div class="stay-list">
+          <div class="stay" onclick="filterByCategory('hotel')">
+            <div class="stay-thumb">🏨</div>
+            <div class="stay-info">
+              <div class="stay-name">Uhu Melati Hotel - <span class="stars">★★★★</span></div>
+              <div class="stay-meta"><span>Type : Hotels</span><span>Location : Jakarta</span></div>
+            </div>
+          </div>
+          <div class="stay" onclick="filterByCategory('guest')">
+            <div class="stay-thumb t2">🏠</div>
+            <div class="stay-info">
+              <div class="stay-name">Bukaro Jinta - <span class="stars">★★★★</span></div>
+              <div class="stay-meta"><span>Type : Guesthouse</span><span>Location : Surabaya</span></div>
+            </div>
+          </div>
+          <div class="stay" onclick="filterByCategory('hotel')">
+            <div class="stay-thumb t3">🏛️</div>
+            <div class="stay-info">
+              <div class="stay-name">El Dantó Royale - <span class="stars">★★★★★</span></div>
+              <div class="stay-meta"><span>Type : Hotel</span><span>Location : Bali</span></div>
+            </div>
+          </div>
+          <div class="stay" onclick="filterByCategory('villa')">
+            <div class="stay-thumb t4">🏡</div>
+            <div class="stay-info">
+              <div class="stay-name">Echo Handap - <span class="stars">★★★★★</span></div>
+              <div class="stay-meta"><span>Type : Villa</span><span>Location : Bandung</span></div>
+            </div>
+          </div>
+          <div class="stay" onclick="filterByCategory('apart')">
+            <div class="stay-thumb t5">🏨</div>
+            <div class="stay-info">
+              <div class="stay-name">Aethelgard Residence - <span class="stars">★★★</span></div>
+              <div class="stay-meta"><span>Type : Apartment</span><span>Location : Jakarta</span></div>
+            </div>
+          </div>
+          <div class="stay" onclick="filterByCategory('resort')">
+            <div class="stay-thumb t6">🌴</div>
+            <div class="stay-info">
+              <div class="stay-name">Sun Paradise Resort - <span class="stars">★★★★★</span></div>
+              <div class="stay-meta"><span>Type : Resort</span><span>Location : Lombok</span></div>
+            </div>
+          </div>
+          <div class="stay" onclick="filterByCategory('homestay')">
+            <div class="stay-thumb t7">🏘️</div>
+            <div class="stay-info">
+              <div class="stay-name">Kampoeng Asri - <span class="stars">★★★★</span></div>
+              <div class="stay-meta"><span>Type : Homestay</span><span>Location : Yogyakarta</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel deals">
+        <div class="panel-title">SPECIAL DEALS</div>
+        <div class="deal-list">
+          <div class="deal-card">
+            <div class="deal-title">Weekend Gateway - <span class="pct">30% OFF</span></div>
+            <div class="deal-sub">Enjoy your weekends with special savings on selected days</div>
+            <div class="deal-row">
+              <ul class="deal-bullets">
+                <li>Valid for Friday - Sunday</li>
+                <li>Selected hotels &amp; villas</li>
+              </ul>
+              <button class="btn-book" onclick="filterByDeal('weekend')">BOOK NOW</button>
+            </div>
+          </div>
+          <div class="deal-card">
+            <div class="deal-title">Long Stay - <span class="pct">SAVE 25%</span></div>
+            <div class="deal-sub">Stay longer and enjoy bigger savings</div>
+            <div class="deal-row">
+              <ul class="deal-bullets">
+                <li>Min. 5 nights stay</li>
+                <li>Applicable for apartments, hotels, &amp; villas</li>
+              </ul>
+              <button class="btn-book" onclick="filterByDeal('longstay')">VIEW DISCOUNT</button>
+            </div>
+          </div>
+          <div class="deal-card">
+            <div class="deal-title">Early Bird - <span class="pct">SAVE 20%</span></div>
+            <div class="deal-sub">Book 30 days in advance and save more</div>
+            <div class="deal-row">
+              <ul class="deal-bullets">
+                <li>Book min. 30 days before</li>
+                <li>All property types</li>
+              </ul>
+              <button class="btn-book" onclick="filterByDeal('earlybird')">BOOK NOW</button>
+            </div>
+          </div>
+          <div class="deal-card">
+            <div class="deal-title">Family Package - <span class="pct">25% OFF</span></div>
+            <div class="deal-sub">Special bundle for family with kids</div>
+            <div class="deal-row">
+              <ul class="deal-bullets">
+                <li>Min. 2 adults + 1 child</li>
+                <li>Free breakfast included</li>
+              </ul>
+              <button class="btn-book" onclick="filterByDeal('family')">BOOK NOW</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ====================== SCREEN 2: LOGIN ====================== -->
+<div class="screen" id="screen-login">
+  <div class="canvas">
+
+    <div class="header">
+      <div class="logo" onclick="go('home')">
+        <div class="logo-icon">R</div>
+        <div class="logo-text">RubyRa<small>HOTEL</small></div>
+      </div>
+      <nav class="nav">
+        <a onclick="toast('Help Center')">HELP CENTER</a>
+        <a onclick="toast('Wishlist (kosong)')">WISHLIST</a>
+        <a onclick="go('bookings')">MY BOOKINGS</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn-red active" onclick="go('login')">LOGIN</button>
+        <button class="btn-outline" onclick="go('signup')">SIGN UP</button>
+      </div>
+    </div>
+
+    <div class="auth-wrap">
+      <div class="auth-illustration">
+        <div>
+          <h2>Selamat Datang Kembali!</h2>
+          <p>Masuk untuk lanjutkan booking impian kamu di RubyRa Hotel</p>
+        </div>
+      </div>
+      <div class="auth-form">
+        <div class="auth-title">Masuk ke Akun</div>
+        <div class="auth-sub">Belum punya akun? <a onclick="go('signup')" style="color:#DC2626; font-weight:700;">Daftar di sini</a></div>
+
+        <div class="input-label">Email</div>
+        <input class="input-box" type="email" placeholder="nama@email.com">
+
+        <div class="input-label">Password</div>
+        <input class="input-box" type="password" placeholder="••••••••">
+        <div class="forgot"><a onclick="toast('Link reset password dikirim ke email')">Lupa password?</a></div>
+
+        <button class="btn-primary" onclick="toast('Login berhasil!'); setTimeout(() => go('home'), 800);">MASUK</button>
+
+        <div class="divider">atau masuk dengan</div>
+
+        <div class="social-row">
+          <button class="social-btn" onclick="toast('Login dengan Google'); setTimeout(() => go('home'), 800);">🇬 Google</button>
+          <button class="social-btn" onclick="toast('Login dengan Facebook'); setTimeout(() => go('home'), 800);">📘 Facebook</button>
+        </div>
+
+        <div class="auth-footer">
+          Dengan masuk, kamu menyetujui <a>Syarat &amp; Ketentuan</a> kami.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ====================== SCREEN 3: SIGN UP ====================== -->
+<div class="screen" id="screen-signup">
+  <div class="canvas">
+
+    <div class="header">
+      <div class="logo" onclick="go('home')">
+        <div class="logo-icon">R</div>
+        <div class="logo-text">RubyRa<small>HOTEL</small></div>
+      </div>
+      <nav class="nav">
+        <a onclick="toast('Help Center')">HELP CENTER</a>
+        <a onclick="toast('Wishlist (kosong)')">WISHLIST</a>
+        <a onclick="go('bookings')">MY BOOKINGS</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn-outline" onclick="go('login')">LOGIN</button>
+        <button class="btn-red active" onclick="go('signup')">SIGN UP</button>
+      </div>
+    </div>
+
+    <div class="auth-wrap">
+      <div class="auth-illustration">
+        <div>
+          <h2>Bergabung dengan RubyRa!</h2>
+          <p>Buat akun gratis dan nikmati diskon spesial untuk anggota baru</p>
+        </div>
+      </div>
+      <div class="auth-form">
+        <div class="auth-title">Daftar Akun Baru</div>
+        <div class="auth-sub">Sudah punya akun? <a onclick="go('login')" style="color:#DC2626; font-weight:700;">Masuk di sini</a></div>
+
+        <div class="input-label">Nama Lengkap</div>
+        <input class="input-box" placeholder="Masukkan nama lengkap">
+
+        <div class="input-label">Email</div>
+        <input class="input-box" type="email" placeholder="nama@email.com">
+
+        <div class="input-label">Nomor HP</div>
+        <input class="input-box" placeholder="+62 812 3456 7890">
+
+        <div class="input-label">Password</div>
+        <input class="input-box" type="password" placeholder="Min. 8 karakter">
+
+        <div class="checkbox-row">
+          <input type="checkbox" checked>
+          <span>Saya setuju dengan <a style="color:#DC2626;font-weight:700;">Syarat &amp; Kebijakan Privasi</a></span>
+        </div>
+
+        <button class="btn-primary" onclick="toast('Akun berhasil dibuat!'); setTimeout(() => go('home'), 800);">DAFTAR</button>
+
+        <div class="auth-footer">
+          Atau daftar cepat dengan Google / Facebook
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ====================== SCREEN 4: SEARCH RESULTS / HOTEL LIST ====================== -->
+<div class="screen" id="screen-results">
+  <div class="canvas">
+
+    <div class="header">
+      <div class="logo" onclick="go('home')">
+        <div class="logo-icon">R</div>
+        <div class="logo-text">RubyRa<small>HOTEL</small></div>
+      </div>
+      <nav class="nav">
+        <a onclick="toast('Help Center')">HELP CENTER</a>
+        <a onclick="toast('Wishlist (kosong)')">WISHLIST</a>
+        <a onclick="go('bookings')">MY BOOKINGS</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn-red" onclick="go('login')">LOGIN</button>
+        <button class="btn-red" onclick="go('signup')">SIGN UP</button>
+      </div>
+    </div>
+
+    <div class="results-header">
+      <div class="results-search">
+        🔍 <input type="text" placeholder="Cari hotel..." value="Bali, Indonesia">
+        <span style="color:#6B7280; border-left:1px solid #E5E7EB; padding-left:14px; font-size:13px;">📅 15-18 Jun 2026</span>
+        <span style="color:#6B7280; border-left:1px solid #E5E7EB; padding-left:14px; font-size:13px;">👥 2 dewasa</span>
+        <button class="btn-red" style="padding:8px 22px;">CARI</button>
+      </div>
+    </div>
+
+    <div class="results-body">
+
+      <aside class="filter-side">
+        <h3>≡ FILTER</h3>
+
+        <div class="filter-group">
+          <div class="lbl">Urutkan</div>
+          <select id="filter-sort" class="input-box" style="padding:8px;" onchange="applyFilters()">
+            <option value="recommended">Rekomendasi</option>
+            <option value="cheap">Harga Termurah</option>
+            <option value="expensive">Harga Termahal</option>
+            <option value="rating">Rating Tertinggi</option>
+            <option value="distance">Terdekat</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <div class="lbl">Tipe Properti</div>
+          <label><input type="checkbox" class="filter-type" value="hotel" onchange="applyFilters()"> 🏨 Hotel</label>
+          <label><input type="checkbox" class="filter-type" value="guest" onchange="applyFilters()"> 🏠 Guest House</label>
+          <label><input type="checkbox" class="filter-type" value="villa" onchange="applyFilters()"> 🏡 Villa</label>
+          <label><input type="checkbox" class="filter-type" value="apart" onchange="applyFilters()"> 🏢 Apartment</label>
+          <label><input type="checkbox" class="filter-type" value="resort" onchange="applyFilters()"> 🌴 Resort</label>
+          <label><input type="checkbox" class="filter-type" value="homestay" onchange="applyFilters()"> 🏘️ Homestay</label>
+          <div style="font-size:10px; color:#6B7280; margin-top:6px;">Kosongkan untuk semua tipe</div>
+        </div>
+
+        <div class="filter-group">
+          <div class="lbl">Rating Minimum</div>
+          <label><input type="radio" name="filter-rating" value="0" checked onchange="applyFilters()"> Semua</label>
+          <label><input type="radio" name="filter-rating" value="3" onchange="applyFilters()"> ⭐ 3.0+</label>
+          <label><input type="radio" name="filter-rating" value="4" onchange="applyFilters()"> ⭐ 4.0+</label>
+          <label><input type="radio" name="filter-rating" value="4.5" onchange="applyFilters()"> ⭐ 4.5+</label>
+          <label><input type="radio" name="filter-rating" value="4.8" onchange="applyFilters()"> ⭐ 4.8+ (Sangat bagus)</label>
+        </div>
+
+        <div class="filter-group">
+          <div class="lbl">Harga Maksimal per malam</div>
+          <input type="range" id="filter-price" style="width:100%;" min="200000" max="2000000" step="50000" value="2000000" oninput="onPriceChange()" onchange="applyFilters()">
+          <div style="font-size:11px; color:#6B7280; margin-top:4px;">Maks <strong id="filter-price-label" style="color:#DC2626;">Rp 2.000.000</strong></div>
+        </div>
+
+        <div class="filter-group">
+          <div class="lbl">Jarak dari pusat kota</div>
+          <label><input type="radio" name="filter-distance" value="999" checked onchange="applyFilters()"> 📍 Semua jarak</label>
+          <label><input type="radio" name="filter-distance" value="1" onchange="applyFilters()"> 📍 &lt; 1 km</label>
+          <label><input type="radio" name="filter-distance" value="2" onchange="applyFilters()"> 📍 &lt; 2 km</label>
+          <label><input type="radio" name="filter-distance" value="3" onchange="applyFilters()"> 📍 &lt; 3 km</label>
+          <label><input type="radio" name="filter-distance" value="5" onchange="applyFilters()"> 📍 &lt; 5 km</label>
+        </div>
+
+        <div class="filter-group">
+          <div class="lbl">Lokasi</div>
+          <label><input type="checkbox" class="filter-location" value="all" checked onchange="applyFilters()"> Semua kota</label>
+          <label><input type="checkbox" class="filter-location" value="bali" onchange="applyFilters()"> Bali</label>
+          <label><input type="checkbox" class="filter-location" value="jakarta" onchange="applyFilters()"> Jakarta</label>
+          <label><input type="checkbox" class="filter-location" value="bandung" onchange="applyFilters()"> Bandung</label>
+          <label><input type="checkbox" class="filter-location" value="yogya" onchange="applyFilters()"> Yogyakarta</label>
+          <label><input type="checkbox" class="filter-location" value="surabaya" onchange="applyFilters()"> Surabaya</label>
+        </div>
+
+        <div class="filter-group">
+          <div class="lbl">Fasilitas</div>
+          <label><input type="checkbox" class="filter-amenity" value="pool" onchange="applyFilters()"> 🏊 Kolam renang</label>
+          <label><input type="checkbox" class="filter-amenity" value="wifi" onchange="applyFilters()"> 📶 Wi-Fi gratis</label>
+          <label><input type="checkbox" class="filter-amenity" value="parking" onchange="applyFilters()"> 🅿️ Parkir gratis</label>
+          <label><input type="checkbox" class="filter-amenity" value="breakfast" onchange="applyFilters()"> 🍳 Sarapan</label>
+          <label><input type="checkbox" class="filter-amenity" value="spa" onchange="applyFilters()"> 💆 Spa</label>
+        </div>
+
+        <button onclick="resetFilters()" style="width:100%; padding:9px; background:#fff; color:#DC2626; border:1.5px solid #DC2626; border-radius:20px; font-weight:700; font-size:12px; cursor:pointer; margin-top:8px;">RESET FILTER</button>
+      </aside>
+
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <div style="font-size:14px; color:#6B7280;"><strong id="filter-count" style="color:#111827;">9 properti</strong> ditemukan <span id="filter-active-tag" style="margin-left:8px;"></span></div>
+          <div class="chips-row" style="margin:0;">
+            <span class="chip active" data-sort="recommended" onclick="setSort(this,'recommended')">Rekomendasi</span>
+            <span class="chip" data-sort="cheap" onclick="setSort(this,'cheap')">Termurah</span>
+            <span class="chip" data-sort="rating" onclick="setSort(this,'rating')">★ Rating</span>
+            <span class="chip" data-sort="distance" onclick="setSort(this,'distance')">Terdekat</span>
+          </div>
+        </div>
+
+        <div class="results-grid" id="results-grid">
+          <div class="hotel-row" data-type="hotel" data-rating="4.9" data-price="450000" data-distance="1.2" data-location="bali" data-amenities="pool wifi breakfast parking" onclick="go('detail')">
+            <div class="img">🏨</div>
+            <div class="info">
+              <div class="name">Hotel Melati Bali <span class="tag">-30%</span></div>
+              <div class="rating">★ 4.9 (284 ulasan) · ⭐⭐⭐⭐</div>
+              <div class="meta">📍 Jl. Pantai Kuta · 1.2 km dari pusat</div>
+              <div class="amenities">
+                <span>🏊 Kolam</span><span>📶 Wi-Fi</span><span>🍳 Sarapan</span><span>🅿️ Parkir</span>
+              </div>
+            </div>
+            <div class="right">
+              <div>
+                <div class="strikethrough">Rp 650.000</div>
+                <div class="price">Rp 450.000</div>
+                <div class="per">per malam</div>
+              </div>
+              <button class="btn-pick">LIHAT DETAIL</button>
+            </div>
+          </div>
+
+          <div class="hotel-row" data-type="villa" data-rating="4.8" data-price="320000" data-distance="3.5" data-location="bali" data-amenities="pool wifi breakfast" onclick="go('detail')">
+            <div class="img v2">🏖️</div>
+            <div class="info">
+              <div class="name">Bukara Villa Ubud</div>
+              <div class="rating">★ 4.8 (192 ulasan) · ⭐⭐⭐⭐</div>
+              <div class="meta">📍 Ubud Center · 3.5 km dari pusat</div>
+              <div class="amenities">
+                <span>🏊 Kolam pribadi</span><span>📶 Wi-Fi</span><span>🍳 Sarapan</span>
+              </div>
+            </div>
+            <div class="right">
+              <div>
+                <div class="price">Rp 320.000</div>
+                <div class="per">per malam</div>
+              </div>
+              <button class="btn-pick">LIHAT DETAIL</button>
+            </div>
+          </div>
+
+          <div class="hotel-row" data-type="resort" data-rating="4.7" data-price="880000" data-distance="2.4" data-location="bali" data-amenities="pool wifi breakfast spa" onclick="go('detail')">
+            <div class="img v3">🏨</div>
+            <div class="info">
+              <div class="name">El Grand Resort Seminyak <span class="tag">PROMO</span></div>
+              <div class="rating">★ 4.7 (421 ulasan) · ⭐⭐⭐⭐⭐</div>
+              <div class="meta">📍 Seminyak Beach · 2.4 km dari pusat</div>
+              <div class="amenities">
+                <span>🏊 2 Kolam</span><span>📶 Wi-Fi</span><span>🍳 Buffet</span><span>💆 Spa</span>
+              </div>
+            </div>
+            <div class="right">
+              <div>
+                <div class="strikethrough">Rp 1.200.000</div>
+                <div class="price">Rp 880.000</div>
+                <div class="per">per malam</div>
+              </div>
+              <button class="btn-pick">LIHAT DETAIL</button>
+            </div>
+          </div>
+
+          <div class="hotel-row" data-type="homestay" data-rating="4.6" data-price="280000" data-distance="4.2" data-location="bali" data-amenities="wifi parking breakfast" onclick="go('detail')">
+            <div class="img v4">🏡</div>
+            <div class="info">
+              <div class="name">Gebu Homestay Denpasar</div>
+              <div class="rating">★ 4.6 (89 ulasan) · ⭐⭐⭐</div>
+              <div class="meta">📍 Denpasar · 4.2 km dari pusat</div>
+              <div class="amenities">
+                <span>📶 Wi-Fi</span><span>🅿️ Parkir</span><span>🍳 Sarapan</span>
+              </div>
+            </div>
+            <div class="right">
+              <div>
+                <div class="price">Rp 280.000</div>
+                <div class="per">per malam</div>
+              </div>
+              <button class="btn-pick">LIHAT DETAIL</button>
+            </div>
+          </div>
+
+          <div class="hotel-row" data-type="apart" data-rating="4.5" data-price="540000" data-distance="1.8" data-location="bali" data-amenities="pool wifi" onclick="go('detail')">
+            <div class="img v5">🏨</div>
+            <div class="info">
+              <div class="name">Aethelgard Apartment</div>
+              <div class="rating">★ 4.5 (156 ulasan) · ⭐⭐⭐⭐</div>
+              <div class="meta">📍 Nusa Dua · 1.8 km dari pusat</div>
+              <div class="amenities">
+                <span>🏊 Kolam</span><span>📶 Wi-Fi</span><span>🍳 Dapur lengkap</span>
+              </div>
+            </div>
+            <div class="right">
+              <div>
+                <div class="price">Rp 540.000</div>
+                <div class="per">per malam</div>
+              </div>
+              <button class="btn-pick">LIHAT DETAIL</button>
+            </div>
+          </div>
+
+          <div class="hotel-row" data-type="hotel" data-rating="4.3" data-price="650000" data-distance="0.8" data-location="jakarta" data-amenities="pool wifi breakfast spa" onclick="go('detail')">
+            <div class="img v3">🏢</div>
+            <div class="info">
+              <div class="name">Uhu Melati Hotel Jakarta</div>
+              <div class="rating">★ 4.3 (412 ulasan) · ⭐⭐⭐⭐</div>
+              <div class="meta">📍 Sudirman · 0.8 km dari pusat</div>
+              <div class="amenities">
+                <span>🏊 Kolam</span><span>📶 Wi-Fi</span><span>🍳 Sarapan</span><span>💆 Spa</span>
+              </div>
+            </div>
+            <div class="right">
+              <div>
+                <div class="price">Rp 650.000</div>
+                <div class="per">per malam</div>
+              </div>
+              <button class="btn-pick">LIHAT DETAIL</button>
+            </div>
+          </div>
+
+          <div class="hotel-row" data-type="guest" data-rating="4.2" data-price="220000" data-distance="2.1" data-location="surabaya" data-amenities="wifi breakfast" onclick="go('detail')">
+            <div class="img v4">🏠</div>
+            <div class="info">
+              <div class="name">Bukaro Jinta Guesthouse</div>
+              <div class="rating">★ 4.2 (76 ulasan) · ⭐⭐⭐⭐</div>
+              <div class="meta">📍 Surabaya Timur · 2.1 km dari pusat</div>
+              <div class="amenities">
+                <span>📶 Wi-Fi</span><span>🍳 Sarapan</span>
+              </div>
+            </div>
+            <div class="right">
+              <div>
+                <div class="price">Rp 220.000</div>
+                <div class="per">per malam</div>
+              </div>
+              <button class="btn-pick">LIHAT DETAIL</button>
+            </div>
+          </div>
+
+          <div class="hotel-row" data-type="villa" data-rating="4.9" data-price="780000" data-distance="3.2" data-location="bandung" data-amenities="pool wifi breakfast" onclick="go('detail')">
+            <div class="img v2">🏡</div>
+            <div class="info">
+              <div class="name">Echo Handap Villa Bandung</div>
+              <div class="rating">★ 4.9 (203 ulasan) · ⭐⭐⭐⭐⭐</div>
+              <div class="meta">📍 Lembang · 3.2 km dari pusat</div>
+              <div class="amenities">
+                <span>🏊 Kolam</span><span>📶 Wi-Fi</span><span>🍳 Sarapan</span>
+              </div>
+            </div>
+            <div class="right">
+              <div>
+                <div class="price">Rp 780.000</div>
+                <div class="per">per malam</div>
+              </div>
+              <button class="btn-pick">LIHAT DETAIL</button>
+            </div>
+          </div>
+
+          <div class="hotel-row" data-type="homestay" data-rating="4.4" data-price="180000" data-distance="0.5" data-location="yogya" data-amenities="wifi breakfast" onclick="go('detail')">
+            <div class="img">🏘️</div>
+            <div class="info">
+              <div class="name">Kampoeng Asri Homestay</div>
+              <div class="rating">★ 4.4 (134 ulasan) · ⭐⭐⭐⭐</div>
+              <div class="meta">📍 Malioboro · 0.5 km dari pusat</div>
+              <div class="amenities">
+                <span>📶 Wi-Fi</span><span>🍳 Sarapan tradisional</span>
+              </div>
+            </div>
+            <div class="right">
+              <div>
+                <div class="price">Rp 180.000</div>
+                <div class="per">per malam</div>
+              </div>
+              <button class="btn-pick">LIHAT DETAIL</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="results-empty" style="display:none; text-align:center; padding:60px 20px; color:#6B7280;">
+          <div style="font-size:48px; margin-bottom:12px;">🔍</div>
+          <div style="font-size:16px; font-weight:700; color:#1F2937;">Tidak ada properti yang cocok</div>
+          <div style="font-size:13px; margin-top:6px;">Coba longgarkan filter atau reset untuk melihat semua hasil.</div>
+          <button onclick="resetFilters()" style="margin-top:14px; padding:9px 24px; background:#DC2626; color:#fff; border:none; border-radius:20px; font-weight:700; font-size:12px; cursor:pointer;">RESET FILTER</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ====================== SCREEN 5: DETAIL HOTEL ====================== -->
+<div class="screen" id="screen-detail">
+  <div class="canvas">
+
+    <div class="header">
+      <div class="logo" onclick="go('home')">
+        <div class="logo-icon">R</div>
+        <div class="logo-text">RubyRa<small>HOTEL</small></div>
+      </div>
+      <nav class="nav">
+        <a onclick="toast('Help Center')">HELP CENTER</a>
+        <a onclick="toast('Wishlist (kosong)')">WISHLIST</a>
+        <a onclick="go('bookings')">MY BOOKINGS</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn-red" onclick="go('login')">LOGIN</button>
+        <button class="btn-red" onclick="go('signup')">SIGN UP</button>
+      </div>
+    </div>
+
+    <div style="padding: 16px 28px; font-size:13px; color:#6B7280;">
+      <a onclick="go('home')" style="color:#DC2626;">Home</a> ›
+      <a onclick="go('results')" style="color:#DC2626;">Hotel di Bali</a> ›
+      <span>Hotel Melati Bali</span>
+    </div>
+
+    <div class="detail-hero">
+      <div>🏨</div>
+      <div>🏊</div>
+      <div>🛏️</div>
+      <div>🍽️</div>
+      <div>🌅<div class="more-photos" onclick="toast('Lihat 12 foto lainnya')">+8 foto</div></div>
+    </div>
+
+    <div class="detail-body">
+      <div class="detail-main">
+        <h1>Hotel Melati Bali</h1>
+        <div class="rating-row">
+          <span class="score">4.9</span>
+          <span><strong>Sangat Bagus</strong> · 284 ulasan</span>
+          <span>⭐⭐⭐⭐</span>
+        </div>
+        <div class="location">📍 Jl. Pantai Kuta No. 45, Kuta, Bali · 1.2 km dari pusat</div>
+
+        <div class="tabs">
+          <div class="tab active">Kamar</div>
+          <div class="tab" onclick="toast('Tab Ulasan')">Ulasan (284)</div>
+          <div class="tab" onclick="toast('Tab Fasilitas')">Fasilitas</div>
+          <div class="tab" onclick="toast('Tab Lokasi')">Lokasi</div>
+          <div class="tab" onclick="toast('Tab Kebijakan')">Kebijakan</div>
+        </div>
+
+        <h2>Tentang Hotel</h2>
+        <p class="desc">
+          Hotel Melati Bali adalah hotel bintang 4 yang terletak strategis di Pantai Kuta, hanya 50 meter dari bibir pantai.
+          Hotel ini menawarkan 120 kamar nyaman dengan pemandangan laut dan kebun tropis. Cocok untuk liburan keluarga,
+          honeymoon, atau perjalanan bisnis.
+        </p>
+
+        <h2>Fasilitas Utama</h2>
+        <div class="amenities-grid">
+          <div>🏊 Kolam renang outdoor</div>
+          <div>📶 Wi-Fi gratis</div>
+          <div>🍳 Sarapan prasmanan</div>
+          <div>🅿️ Parkir gratis</div>
+          <div>💆 Spa &amp; pijat</div>
+          <div>🏋️ Pusat kebugaran</div>
+          <div>🍽️ Restoran 24 jam</div>
+          <div>🚗 Antar-jemput bandara</div>
+          <div>👨‍👩‍👧 Ramah anak</div>
+        </div>
+
+        <h2>Pilih Kamar</h2>
+
+        <div class="room-card">
+          <div class="img">🛏️</div>
+          <div>
+            <div class="name">Standard Room</div>
+            <div class="feat">
+              <span>🛏️ 1 King bed</span>
+              <span>👥 Max 2 tamu</span>
+              <span>📐 24 m²</span>
+            </div>
+            <div class="feat" style="margin-top:6px;">
+              <span>📶 Wi-Fi</span><span>❄️ AC</span><span>📺 TV</span><span>🍳 Sarapan</span>
+            </div>
+          </div>
+          <div class="right">
+            <div>
+              <div class="price">Rp 450.000</div>
+              <div class="per">/ malam</div>
+            </div>
+            <button class="btn-pick" onclick="go('booking')">PILIH</button>
+          </div>
+        </div>
+
+        <div class="room-card">
+          <div class="img v2">🌅</div>
+          <div>
+            <div class="name">Deluxe Room (Pool View)</div>
+            <div class="feat">
+              <span>🛏️ 1 King bed</span>
+              <span>👥 Max 2 tamu</span>
+              <span>📐 32 m²</span>
+            </div>
+            <div class="feat" style="margin-top:6px;">
+              <span>📶 Wi-Fi</span><span>❄️ AC</span><span>🛁 Bathtub</span><span>🍳 Sarapan</span>
+            </div>
+          </div>
+          <div class="right">
+            <div>
+              <div class="price">Rp 650.000</div>
+              <div class="per">/ malam</div>
+            </div>
+            <button class="btn-pick" onclick="go('booking')">PILIH</button>
+          </div>
+        </div>
+
+        <div class="room-card">
+          <div class="img v3">👨‍👩‍👧</div>
+          <div>
+            <div class="name">Family Suite</div>
+            <div class="feat">
+              <span>🛏️ 2 Queen bed</span>
+              <span>👥 Max 4 tamu</span>
+              <span>📐 48 m²</span>
+            </div>
+            <div class="feat" style="margin-top:6px;">
+              <span>📶 Wi-Fi</span><span>❄️ AC</span><span>🛋️ Ruang tamu</span><span>🍳 Sarapan</span>
+            </div>
+          </div>
+          <div class="right">
+            <div>
+              <div class="price">Rp 950.000</div>
+              <div class="per">/ malam</div>
+            </div>
+            <button class="btn-pick" onclick="go('booking')">PILIH</button>
+          </div>
+        </div>
+
+      </div>
+
+      <aside class="booking-aside">
+        <h3>📅 Mulai Booking</h3>
+        <div class="row"><span class="lbl">Check-in</span><span class="val">15 Jun 2026</span></div>
+        <div class="row"><span class="lbl">Check-out</span><span class="val">18 Jun 2026</span></div>
+        <div class="row"><span class="lbl">Tamu</span><span class="val">2 dewasa</span></div>
+        <div class="row"><span class="lbl">Kamar</span><span class="val">1 kamar</span></div>
+        <div class="row" style="margin-top:14px; padding-top:14px; border-top:1.5px dashed #D1D5DB;">
+          <span class="lbl">Mulai dari</span><span class="total">Rp 450.000</span>
+        </div>
+        <button class="btn-primary" onclick="go('booking')">PILIH KAMAR</button>
+        <div style="font-size:11px; color:#6B7280; text-align:center; margin-top:10px;">
+          ✓ Bebas batal · ✓ Bayar saat tiba tersedia
+        </div>
+      </aside>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ====================== SCREEN 6: BOOKING FORM ====================== -->
+<div class="screen" id="screen-booking">
+  <div class="canvas">
+
+    <div class="header">
+      <div class="logo" onclick="go('home')">
+        <div class="logo-icon">R</div>
+        <div class="logo-text">RubyRa<small>HOTEL</small></div>
+      </div>
+      <nav class="nav">
+        <a onclick="toast('Help Center')">HELP CENTER</a>
+        <a onclick="toast('Wishlist (kosong)')">WISHLIST</a>
+        <a onclick="go('bookings')">MY BOOKINGS</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn-red" onclick="go('login')">LOGIN</button>
+        <button class="btn-red" onclick="go('signup')">SIGN UP</button>
+      </div>
+    </div>
+
+    <div class="page-title-bar">
+      <span class="back-link" onclick="go('detail')">←</span>
+      <h1>Detail Booking</h1>
+      <div class="steps">
+        <div class="step active"><span class="n">1</span> Detail</div>
+        <div class="step"><span class="n">2</span> Pembayaran</div>
+        <div class="step"><span class="n">3</span> Selesai</div>
+      </div>
+    </div>
+
+    <div class="booking-body">
+      <div class="booking-main">
+
+        <div class="booking-section">
+          <h2>🏨 Hotel &amp; Kamar</h2>
+          <div style="display:flex; gap:14px; align-items:center;">
+            <div style="width:80px; height:80px; border-radius:8px; background:linear-gradient(135deg,#FDBA74,#F59E0B); display:flex; align-items:center; justify-content:center; font-size:36px;">🌅</div>
+            <div>
+              <div style="font-size:16px; font-weight:800;">Hotel Melati Bali</div>
+              <div style="font-size:13px; color:#6B7280; margin-top:2px;">Deluxe Room (Pool View)</div>
+              <div style="font-size:12px; color:#DC2626; font-weight:700; margin-top:4px;">Rp 650.000 / malam</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="booking-section">
+          <h2>📅 Tanggal Menginap</h2>
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Check-in</label>
+              <input type="date" value="2026-06-15">
+            </div>
+            <div class="form-field">
+              <label>Check-out</label>
+              <input type="date" value="2026-06-18">
+            </div>
+          </div>
+          <div style="font-size:12px; color:#059669; font-weight:600; margin-top:10px;">✓ 3 malam menginap</div>
+        </div>
+
+        <div class="booking-section">
+          <h2>👥 Tamu &amp; Kamar</h2>
+          <div class="stepper-row">
+            <div class="lbl">Dewasa <small>13 tahun ke atas</small></div>
+            <div class="stepper">
+              <button class="stepper-btn">−</button>
+              <span class="count">2</span>
+              <button class="stepper-btn">+</button>
+            </div>
+          </div>
+          <div class="stepper-row">
+            <div class="lbl">Anak <small>2 - 12 tahun</small></div>
+            <div class="stepper">
+              <button class="stepper-btn">−</button>
+              <span class="count">0</span>
+              <button class="stepper-btn">+</button>
+            </div>
+          </div>
+          <div class="stepper-row">
+            <div class="lbl">Kamar</div>
+            <div class="stepper">
+              <button class="stepper-btn">−</button>
+              <span class="count">1</span>
+              <button class="stepper-btn">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="booking-section">
+          <h2>📝 Data Pemesan</h2>
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Nama Lengkap</label>
+              <input type="text" placeholder="Sesuai KTP">
+            </div>
+            <div class="form-field">
+              <label>Email</label>
+              <input type="email" placeholder="nama@email.com">
+            </div>
+            <div class="form-field">
+              <label>Nomor HP</label>
+              <input type="tel" placeholder="+62 812 3456 7890">
+            </div>
+            <div class="form-field">
+              <label>Negara</label>
+              <select><option>Indonesia</option><option>Malaysia</option><option>Singapore</option></select>
+            </div>
+          </div>
+          <div class="form-field" style="margin-top:14px;">
+            <label>Catatan Khusus (opsional)</label>
+            <input type="text" placeholder="Mis. minta kamar lantai tinggi, late check-in, dll.">
+          </div>
+        </div>
+
+      </div>
+
+      <aside class="booking-summary">
+        <h3>💰 Rincian Harga</h3>
+        <div class="row"><span class="lbl">Rp 650.000 × 3 malam</span><span>Rp 1.950.000</span></div>
+        <div class="row"><span class="lbl">Pajak (10%)</span><span>Rp 195.000</span></div>
+        <div class="row"><span class="lbl">Biaya layanan</span><span>Rp 50.000</span></div>
+        <div class="row"><span class="lbl" style="color:#059669;">Diskon member</span><span style="color:#059669;">- Rp 50.000</span></div>
+        <div class="row total"><span>Total</span><span>Rp 2.145.000</span></div>
+
+        <button class="btn-primary" onclick="go('payment')">LANJUT BAYAR</button>
+
+        <div style="font-size:11px; color:#6B7280; margin-top:12px; line-height:1.6;">
+          🔒 Pembayaran aman &amp; terenkripsi<br>
+          📞 Customer service 24/7<br>
+          ✓ Konfirmasi instan via email
+        </div>
+      </aside>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ====================== SCREEN 7: PAYMENT ====================== -->
+<div class="screen" id="screen-payment">
+  <div class="canvas">
+
+    <div class="header">
+      <div class="logo" onclick="go('home')">
+        <div class="logo-icon">R</div>
+        <div class="logo-text">RubyRa<small>HOTEL</small></div>
+      </div>
+      <nav class="nav">
+        <a onclick="toast('Help Center')">HELP CENTER</a>
+        <a onclick="toast('Wishlist (kosong)')">WISHLIST</a>
+        <a onclick="go('bookings')">MY BOOKINGS</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn-red" onclick="go('login')">LOGIN</button>
+        <button class="btn-red" onclick="go('signup')">SIGN UP</button>
+      </div>
+    </div>
+
+    <div class="page-title-bar">
+      <span class="back-link" onclick="go('booking')">←</span>
+      <h1>Pembayaran</h1>
+      <div class="steps">
+        <div class="step done"><span class="n">✓</span> Detail</div>
+        <div class="step active"><span class="n">2</span> Pembayaran</div>
+        <div class="step"><span class="n">3</span> Selesai</div>
+      </div>
+    </div>
+
+    <div class="booking-body">
+      <div class="booking-main">
+
+        <div class="booking-section">
+          <h2>💳 Pilih Metode Pembayaran</h2>
+
+          <div style="font-size:12px; font-weight:800; color:#6B7280; margin-top:8px; letter-spacing:0.5px;">KARTU KREDIT / DEBIT</div>
+          <div class="pay-method-list">
+            <div class="pay-method selected" onclick="selectPay(this)">
+              <div class="pay-radio"></div>
+              <div class="pay-icon">💳</div>
+              <div class="pay-info">
+                <div class="name">Visa / Mastercard</div>
+                <div class="sub">Aman dengan 3D Secure</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size:12px; font-weight:800; color:#6B7280; margin-top:18px; letter-spacing:0.5px;">TRANSFER BANK</div>
+          <div class="pay-method-list">
+            <div class="pay-method" onclick="selectPay(this)">
+              <div class="pay-radio"></div>
+              <div class="pay-icon">🏦</div>
+              <div class="pay-info">
+                <div class="name">BCA Virtual Account</div>
+                <div class="sub">Otomatis terkonfirmasi</div>
+              </div>
+            </div>
+            <div class="pay-method" onclick="selectPay(this)">
+              <div class="pay-radio"></div>
+              <div class="pay-icon">🏦</div>
+              <div class="pay-info">
+                <div class="name">BNI / Mandiri / BRI</div>
+                <div class="sub">Otomatis terkonfirmasi</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size:12px; font-weight:800; color:#6B7280; margin-top:18px; letter-spacing:0.5px;">E-WALLET</div>
+          <div class="pay-method-list">
+            <div class="pay-method" onclick="selectPay(this)">
+              <div class="pay-radio"></div>
+              <div class="pay-icon">📱</div>
+              <div class="pay-info">
+                <div class="name">GoPay</div>
+                <div class="sub">Bayar via app GoPay</div>
+              </div>
+            </div>
+            <div class="pay-method" onclick="selectPay(this)">
+              <div class="pay-radio"></div>
+              <div class="pay-icon">📱</div>
+              <div class="pay-info">
+                <div class="name">OVO</div>
+                <div class="sub">Bayar via app OVO</div>
+              </div>
+            </div>
+            <div class="pay-method" onclick="selectPay(this)">
+              <div class="pay-radio"></div>
+              <div class="pay-icon">📱</div>
+              <div class="pay-info">
+                <div class="name">DANA</div>
+                <div class="sub">Bayar via app DANA</div>
+              </div>
+            </div>
+            <div class="pay-method" onclick="selectPay(this)">
+              <div class="pay-radio"></div>
+              <div class="pay-icon">📱</div>
+              <div class="pay-info">
+                <div class="name">ShopeePay</div>
+                <div class="sub">Bayar via app Shopee</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size:12px; font-weight:800; color:#6B7280; margin-top:18px; letter-spacing:0.5px;">GERAI / RETAIL</div>
+          <div class="pay-method-list">
+            <div class="pay-method" onclick="selectPay(this)">
+              <div class="pay-radio"></div>
+              <div class="pay-icon">🏪</div>
+              <div class="pay-info">
+                <div class="name">Indomaret</div>
+                <div class="sub">Bayar tunai di kasir</div>
+              </div>
+            </div>
+            <div class="pay-method" onclick="selectPay(this)">
+              <div class="pay-radio"></div>
+              <div class="pay-icon">🏪</div>
+              <div class="pay-info">
+                <div class="name">Alfamart</div>
+                <div class="sub">Bayar tunai di kasir</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="promo-input">
+            🎟️
+            <input type="text" placeholder="Punya kode promo? Masukkan di sini">
+            <button class="btn-apply">PAKAI</button>
+          </div>
+        </div>
+
+      </div>
+
+      <aside class="booking-summary">
+        <h3>📋 Ringkasan Pesanan</h3>
+        <div style="display:flex; gap:10px; padding:8px 0;">
+          <div style="width:50px; height:50px; border-radius:6px; background:linear-gradient(135deg,#FDBA74,#F59E0B); display:flex; align-items:center; justify-content:center; font-size:24px;">🌅</div>
+          <div>
+            <div style="font-size:13px; font-weight:800;">Hotel Melati Bali</div>
+            <div style="font-size:11px; color:#6B7280;">Deluxe Room</div>
+            <div style="font-size:11px; color:#6B7280;">15-18 Jun · 2 tamu</div>
+          </div>
+        </div>
+        <div class="row" style="margin-top:8px; padding-top:8px; border-top:1.5px dashed #D1D5DB;">
+          <span class="lbl">Subtotal (3 malam)</span><span>Rp 1.950.000</span>
+        </div>
+        <div class="row"><span class="lbl">Pajak &amp; layanan</span><span>Rp 245.000</span></div>
+        <div class="row"><span class="lbl" style="color:#059669;">Diskon</span><span style="color:#059669;">- Rp 50.000</span></div>
+        <div class="row total"><span>Total Bayar</span><span>Rp 2.145.000</span></div>
+
+        <button class="btn-primary" onclick="toast('Pembayaran berhasil! Booking dikonfirmasi.'); setTimeout(() => go('bookings'), 1200);">
+          BAYAR SEKARANG
+        </button>
+
+        <div style="font-size:11px; color:#6B7280; margin-top:12px; line-height:1.6;">
+          🔒 Transaksi terenkripsi SSL<br>
+          ↩️ Bebas batal 24 jam sebelum check-in<br>
+          ✓ E-voucher dikirim instan
+        </div>
+      </aside>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ====================== SCREEN 8: MY BOOKINGS ====================== -->
+<div class="screen" id="screen-bookings">
+  <div class="canvas">
+
+    <div class="header">
+      <div class="logo" onclick="go('home')">
+        <div class="logo-icon">R</div>
+        <div class="logo-text">RubyRa<small>HOTEL</small></div>
+      </div>
+      <nav class="nav">
+        <a onclick="toast('Help Center')">HELP CENTER</a>
+        <a onclick="toast('Wishlist (kosong)')">WISHLIST</a>
+        <a class="active">MY BOOKINGS</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn-red" onclick="go('login')">LOGIN</button>
+        <button class="btn-red" onclick="go('signup')">SIGN UP</button>
+      </div>
+    </div>
+
+    <div style="padding: 24px 30px 8px;">
+      <h1 style="font-size:24px; font-weight:800;">📋 Booking Saya</h1>
+      <p style="font-size:13px; color:#6B7280; margin-top:4px;">Kelola semua reservasi kamu di sini</p>
+    </div>
+
+    <div class="booking-page-tabs">
+      <div class="tab active">Aktif (2)</div>
+      <div class="tab" onclick="toast('Tab Selesai (5 booking)')">Selesai (5)</div>
+      <div class="tab" onclick="toast('Tab Dibatalkan (1 booking)')">Dibatalkan (1)</div>
+    </div>
+
+    <div class="bookings-list">
+
+      <div class="booking-item">
+        <div class="img v2">🌅</div>
+        <div class="info">
+          <div class="name">Hotel Melati Bali</div>
+          <div class="room">Deluxe Room (Pool View)</div>
+          <div class="status status-confirmed">● CONFIRMED</div>
+          <div class="dates">📅 15-18 Jun 2026 · 3 malam · 2 tamu</div>
+          <div class="total">Rp 2.145.000</div>
+          <div class="booking-actions-row">
+            <button class="btn-mini" onclick="go('detail')">Lihat Detail</button>
+            <button class="btn-mini" onclick="toast('Menghubungi hotel...')">Hubungi Hotel</button>
+            <button class="btn-mini solid" onclick="toast('E-voucher terbuka')">E-Voucher</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-item">
+        <div class="img">🏖️</div>
+        <div class="info">
+          <div class="name">Bukara Villa Ubud</div>
+          <div class="room">Standard Room</div>
+          <div class="status status-pending">● MENUNGGU BAYAR</div>
+          <div class="dates">📅 22-24 Jul 2026 · 2 malam · 2 tamu</div>
+          <div class="total">Rp 720.000</div>
+          <div class="booking-actions-row">
+            <button class="btn-mini solid" onclick="go('payment')">Bayar Sekarang</button>
+            <button class="btn-mini" onclick="toast('Booking dibatalkan')">Batal</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-item">
+        <div class="img v3">🏨</div>
+        <div class="info">
+          <div class="name">El Grand Resort Seminyak</div>
+          <div class="room">Family Suite</div>
+          <div class="status status-completed">● SELESAI</div>
+          <div class="dates">📅 10-13 Mei 2026 · 3 malam · 4 tamu</div>
+          <div class="total">Rp 2.640.000</div>
+          <div class="booking-actions-row">
+            <button class="btn-mini" onclick="toast('Buka form review')">Beri Ulasan ⭐</button>
+            <button class="btn-mini solid" onclick="go('detail')">Booking Lagi</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-item">
+        <div class="img v4">🏡</div>
+        <div class="info">
+          <div class="name">Gebu Homestay Denpasar</div>
+          <div class="room">Standard Room</div>
+          <div class="status status-completed">● SELESAI</div>
+          <div class="dates">📅 02-04 Apr 2026 · 2 malam · 2 tamu</div>
+          <div class="total">Rp 560.000</div>
+          <div class="booking-actions-row">
+            <button class="btn-mini" onclick="toast('Buka form review')">Beri Ulasan ⭐</button>
+            <button class="btn-mini solid" onclick="go('detail')">Booking Lagi</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ====================== Dev Navigation Helper ====================== -->
+<div class="dev-nav">
+  <div class="dev-nav-title">🧭 NAVIGASI</div>
+  <button data-screen="home"     onclick="go('home')">1. Home</button>
+  <button data-screen="login"    onclick="go('login')">2. Login</button>
+  <button data-screen="signup"   onclick="go('signup')">3. Sign Up</button>
+  <button data-screen="results"  onclick="go('results')">4. Daftar Hotel</button>
+  <button data-screen="detail"   onclick="go('detail')">5. Detail Hotel</button>
+  <button data-screen="booking"  onclick="go('booking')">6. Form Booking</button>
+  <button data-screen="payment"  onclick="go('payment')">7. Pembayaran</button>
+  <button data-screen="bookings" onclick="go('bookings')">8. Booking Saya</button>
+</div>
+
+<div class="footnote">RubyRa Hotel · Desktop Clickable Prototype · © 2026</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ============ Screen navigation ============
+  function go(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    var target = document.getElementById('screen-' + name);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.dev-nav button').forEach(b => {
+      b.classList.toggle('active', b.dataset.screen === name);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'instant' });
+
+    if (name === 'results') applyFilters();
+  }
+
+  function toast(message) {
+    var t = document.getElementById('toast');
+    t.textContent = message;
+    t.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  function selectPay(el) {
+    el.parentElement.parentElement.querySelectorAll('.pay-method').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // ============ Filtering ============
+  const CATEGORY_LABELS = {
+    hotel: 'Hotels', guest: 'Guest House', villa: 'Villa',
+    apart: 'Apartment', resort: 'Resort', homestay: 'Homestay'
+  };
+
+  // Click kategori bulet → langsung filter berdasarkan tipe
+  function filterByCategory(type) {
+    // Reset semua filter type, lalu centang yang dipilih
+    document.querySelectorAll('.filter-type').forEach(c => { c.checked = (c.value === type); });
+    // Reset rating, jarak, harga, lokasi ke default
+    document.querySelector('input[name="filter-rating"][value="0"]').checked = true;
+    document.querySelector('input[name="filter-distance"][value="999"]').checked = true;
+    document.querySelectorAll('.filter-location').forEach(c => { c.checked = (c.value === 'all'); });
+    document.querySelectorAll('.filter-amenity').forEach(c => { c.checked = false; });
+    document.getElementById('filter-price').value = 2000000;
+    document.getElementById('filter-price-label').textContent = 'Rp 2.000.000';
+    document.getElementById('filter-sort').value = 'recommended';
+
+    go('results');
+    toast('Filter: ' + (CATEGORY_LABELS[type] || type));
+  }
+
+  // Click special deal → terapkan filter sesuai deal
+  function filterByDeal(deal) {
+    document.querySelectorAll('.filter-type').forEach(c => { c.checked = false; });
+    document.querySelector('input[name="filter-rating"][value="0"]').checked = true;
+    document.querySelector('input[name="filter-distance"][value="999"]').checked = true;
+    document.querySelectorAll('.filter-location').forEach(c => { c.checked = (c.value === 'all'); });
+    document.querySelectorAll('.filter-amenity').forEach(c => { c.checked = false; });
+    document.getElementById('filter-sort').value = 'cheap';
+
+    if (deal === 'weekend') {
+      // hotels + villa, max Rp 1jt
+      document.querySelectorAll('.filter-type').forEach(c => { if (c.value==='hotel'||c.value==='villa') c.checked = true; });
+      document.getElementById('filter-price').value = 1000000;
+      document.getElementById('filter-price-label').textContent = 'Rp 1.000.000';
+      toast('💰 Promo Weekend 30% — Hotel & Villa');
+    } else if (deal === 'longstay') {
+      // hotel, villa, apartment
+      document.querySelectorAll('.filter-type').forEach(c => { if (['hotel','villa','apart'].includes(c.value)) c.checked = true; });
+      document.getElementById('filter-price').value = 2000000;
+      document.getElementById('filter-price-label').textContent = 'Rp 2.000.000';
+      toast('💰 Promo Long Stay 25% — Min. 5 malam');
+    } else if (deal === 'earlybird') {
+      document.getElementById('filter-price').value = 2000000;
+      document.getElementById('filter-price-label').textContent = 'Rp 2.000.000';
+      toast('💰 Early Bird 20% — Book 30 hari sebelum');
+    } else if (deal === 'family') {
+      document.querySelectorAll('.filter-type').forEach(c => { if (c.value==='hotel'||c.value==='resort') c.checked = true; });
+      document.querySelectorAll('.filter-amenity').forEach(c => { if (c.value==='breakfast'||c.value==='pool') c.checked = true; });
+      document.getElementById('filter-price').value = 2000000;
+      document.getElementById('filter-price-label').textContent = 'Rp 2.000.000';
+      toast('💰 Family Package 25% — Hotel & Resort');
+    }
+    go('results');
+  }
+
+  function onPriceChange() {
+    const v = parseInt(document.getElementById('filter-price').value, 10);
+    document.getElementById('filter-price-label').textContent = 'Rp ' + v.toLocaleString('id-ID');
+  }
+
+  function setSort(el, sort) {
+    document.querySelectorAll('.chips-row .chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('filter-sort').value = sort;
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const types       = [...document.querySelectorAll('.filter-type:checked')].map(c => c.value);
+    const minRating   = parseFloat(document.querySelector('input[name="filter-rating"]:checked').value);
+    const maxDistance = parseFloat(document.querySelector('input[name="filter-distance"]:checked').value);
+    const maxPrice    = parseInt(document.getElementById('filter-price').value, 10);
+    const amenities   = [...document.querySelectorAll('.filter-amenity:checked')].map(c => c.value);
+    const sort        = document.getElementById('filter-sort').value;
+
+    const locChecks = [...document.querySelectorAll('.filter-location:checked')].map(c => c.value);
+    const locations = locChecks.includes('all') ? null : locChecks;
+
+    const grid = document.getElementById('results-grid');
+    const rows = [...grid.querySelectorAll('.hotel-row')];
+
+    let visibleCount = 0;
+    rows.forEach(row => {
+      const t = row.dataset.type;
+      const r = parseFloat(row.dataset.rating);
+      const p = parseInt(row.dataset.price, 10);
+      const d = parseFloat(row.dataset.distance);
+      const l = row.dataset.location;
+      const a = (row.dataset.amenities || '').split(' ');
+
+      const okType    = types.length === 0 || types.includes(t);
+      const okRating  = r >= minRating;
+      const okDist    = d <= maxDistance;
+      const okPrice   = p <= maxPrice;
+      const okLoc     = !locations || locations.includes(l);
+      const okAmenity = amenities.length === 0 || amenities.every(x => a.includes(x));
+
+      const show = okType && okRating && okDist && okPrice && okLoc && okAmenity;
+      row.style.display = show ? '' : 'none';
+      if (show) visibleCount++;
+    });
+
+    // Sort visible rows
+    const visibleRows = rows.filter(r => r.style.display !== 'none');
+    visibleRows.sort((a, b) => {
+      if (sort === 'cheap')      return (+a.dataset.price)    - (+b.dataset.price);
+      if (sort === 'expensive')  return (+b.dataset.price)    - (+a.dataset.price);
+      if (sort === 'rating')     return (+b.dataset.rating)   - (+a.dataset.rating);
+      if (sort === 'distance')   return (+a.dataset.distance) - (+b.dataset.distance);
+      return 0;
+    });
+    visibleRows.forEach(r => grid.appendChild(r));
+
+    // Update count + active filter tag
+    document.getElementById('filter-count').textContent = visibleCount + ' properti';
+    const tags = [];
+    if (types.length) tags.push(types.map(t => CATEGORY_LABELS[t]||t).join(', '));
+    if (minRating > 0) tags.push('⭐ ' + minRating + '+');
+    if (maxDistance < 999) tags.push('< ' + maxDistance + ' km');
+    if (maxPrice < 2000000) tags.push('≤ Rp ' + maxPrice.toLocaleString('id-ID'));
+    if (locations) tags.push('di ' + locations.join(', '));
+    document.getElementById('filter-active-tag').innerHTML = tags.length
+      ? '<span style="background:#FEF2F2; color:#DC2626; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:600;">🔖 ' + tags.join(' · ') + '</span>'
+      : '';
+
+    document.getElementById('results-empty').style.display = visibleCount === 0 ? 'block' : 'none';
+    grid.style.display = visibleCount === 0 ? 'none' : '';
+  }
+
+  function resetFilters() {
+    document.querySelectorAll('.filter-type').forEach(c => c.checked = false);
+    document.querySelector('input[name="filter-rating"][value="0"]').checked = true;
+    document.querySelector('input[name="filter-distance"][value="999"]').checked = true;
+    document.querySelectorAll('.filter-location').forEach(c => { c.checked = (c.value === 'all'); });
+    document.querySelectorAll('.filter-amenity').forEach(c => c.checked = false);
+    document.getElementById('filter-price').value = 2000000;
+    document.getElementById('filter-price-label').textContent = 'Rp 2.000.000';
+    document.getElementById('filter-sort').value = 'recommended';
+    document.querySelectorAll('.chips-row .chip').forEach(c => c.classList.remove('active'));
+    const firstChip = document.querySelector('.chips-row .chip[data-sort="recommended"]');
+    if (firstChip) firstChip.classList.add('active');
+    applyFilters();
+    toast('✓ Filter direset');
+  }
+
+  // ============ Initialization ============
+  document.querySelector('.dev-nav button[data-screen="home"]').classList.add('active');
+</script>
+
+</body>
+</html>

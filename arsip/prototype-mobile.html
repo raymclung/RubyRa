@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RubyRa Hotel — Mobile Interactive Prototype</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+    color: #111827;
+    line-height: 1.4;
+    min-height: 100vh;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .page-title {
+    text-align: center;
+    margin-bottom: 8px;
+    font-size: 24px;
+    color: #FCA5A5;
+    font-weight: 800;
+  }
+  .page-subtitle {
+    text-align: center;
+    color: #9CA3AF;
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+
+  .stage {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* ===== Phone frame ===== */
+  .phone-frame {
+    width: 320px;
+    height: 660px;
+    background: #1F2937;
+    border-radius: 44px;
+    padding: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    background: #FFFFFF;
+    border-radius: 32px;
+    overflow: hidden;
+    position: relative;
+  }
+  .notch {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 24px;
+    background: #1F2937;
+    border-radius: 0 0 16px 16px;
+    z-index: 100;
+  }
+
+  .screen {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    background: #fff;
+    display: none;
+    flex-direction: column;
+    animation: fadeIn 0.25s ease;
+  }
+  .screen.active { display: flex; }
+  .screen::-webkit-scrollbar { width: 0; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 26px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #111827;
+    position: relative;
+    z-index: 5;
+    flex-shrink: 0;
+  }
+
+  /* ===== Side panel ===== */
+  .side-panel {
+    width: 260px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 18px;
+    color: #fff;
+    backdrop-filter: blur(10px);
+  }
+  .side-panel h3 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #FCA5A5;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 18px;
+  }
+  .nav-list li {
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #D1D5DB;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-list li:hover { background: rgba(220,38,38,0.15); color: #fff; }
+  .nav-list li.current { background: #DC2626; color: #fff; font-weight: 700; }
+  .nav-list li .num {
+    width: 22px; height: 22px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .nav-list li.current .num { background: rgba(255,255,255,0.25); }
+  .side-tip {
+    font-size: 11px;
+    color: #9CA3AF;
+    line-height: 1.6;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .side-tip strong { color: #FCA5A5; }
+
+  /* ===== Screen content styles ===== */
+  .header-red {
+    background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+    color: #fff;
+    padding: 16px 18px 24px;
+    flex-shrink: 0;
+  }
+  .header-red h1 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    cursor: pointer;
+  }
+  .header-red p { font-size: 11px; opacity: 0.9; }
+  .search-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin: 12px 18px 0;
+    font-size: 12px;
+    color: #6B7280;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .promo-card {
+    background: linear-gradient(135deg, #F59E0B, #DC2626);
+    color: #fff;
+    margin: 16px 18px 0;
+    padding: 14px;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+  }
+  .promo-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.5px; opacity: 0.95; }
+  .promo-title { font-size: 18px; font-weight: 800; margin-top: 4px; }
+  .promo-sub { font-size: 10px; opacity: 0.9; margin-top: 2px; }
+  .promo-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 32px; }
+  .dots { text-align: center; margin: 8px 0; font-size: 8px; letter-spacing: 4px; color: #DC2626; }
+  .section-title { font-size: 13px; font-weight: 700; padding: 12px 18px 8px; }
+  .section-title .link { float: right; color: #DC2626; font-size: 11px; font-weight: 600; cursor: pointer; }
+
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 0 14px;
+  }
+  .cat-item {
+    text-align: center;
+    padding: 8px 4px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background 0.15s;
+  }
+  .cat-item:hover { background: #F9FAFB; }
+  .cat-item:active { transform: scale(0.95); }
+  .cat-icon {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    margin: 0 auto 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .cat-label { font-size: 10px; font-weight: 600; color: #1F2937; }
+
+  .reco-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0 14px 12px;
+  }
+  .reco-card {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FEE2E2;
+    position: relative;
+    height: 110px;
+    display: flex;
+    align-items: flex-end;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .reco-card.alt { background: #FED7AA; }
+  .reco-card .badge {
+    position: absolute; top: 8px; left: 8px;
+    background: #DC2626; color: #fff;
+    font-size: 8px; font-weight: 700;
+    padding: 2px 6px; border-radius: 4px;
+  }
+  .reco-card .icon { position: absolute; top: 30px; right: 20px; font-size: 34px; }
+  .reco-card .name { font-size: 11px; font-weight: 700; color: #1F2937; }
+
+  .bottom-nav {
+    margin-top: auto;
+    background: #fff;
+    border-top: 1px solid #E5E7EB;
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0 10px;
+    flex-shrink: 0;
+  }
+  .nav-item {
+    display: flex; flex-direction: column;
+    align-items: center;
+    font-size: 9px; color: #9CA3AF;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+  }
+  .nav-item:hover { background: #F9FAFB; }
+  .nav-item .icon { font-size: 18px; }
+  .nav-item.active { color: #DC2626; }
+  .nav-item.active .icon { color: #DC2626; }
+
+  /* Auth */
+  .auth-content { padding: 24px 24px 20px; flex: 1; }
+  .auth-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; color: #1F2937; }
+  .auth-sub { font-size: 12px; color: #6B7280; margin-bottom: 18px; }
+  .input-label { font-size: 11px; color: #6B7280; margin: 12px 0 4px; font-weight: 600; }
+  .input-box {
+    width: 100%;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    background: #F9FAFB;
+    color: #1F2937;
+    font-family: inherit;
+  }
+  .input-box:focus { outline: none; border-color: #DC2626; background: #fff; }
+  .btn-primary {
+    background: #DC2626; color: #fff; border: none;
+    border-radius: 10px; padding: 12px;
+    font-size: 13px; font-weight: 700; width: 100%;
+    margin-top: 18px; cursor: pointer;
+    font-family: inherit; letter-spacing: 0.5px;
+  }
+  .btn-primary:hover { background: #B91C1C; }
+  .divider { text-align: center; color: #9CA3AF; font-size: 11px; margin: 18px 0 12px; position: relative; }
+  .divider::before, .divider::after { content: ''; height: 1px; background: #E5E7EB; width: 30%; position: absolute; top: 50%; }
+  .divider::before { left: 0; } .divider::after { right: 0; }
+  .social-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    border: 1px solid #E5E7EB; border-radius: 10px; padding: 10px;
+    font-size: 12px; font-weight: 600; margin-top: 8px;
+    background: #fff; cursor: pointer;
+  }
+  .social-btn:hover { background: #F9FAFB; }
+  .auth-footer { text-align: center; font-size: 11px; color: #6B7280; margin-top: 16px; }
+  .auth-footer a { color: #DC2626; font-weight: 700; cursor: pointer; }
+  .forgot { text-align: right; font-size: 10px; color: #DC2626; margin-top: 4px; font-weight: 600; cursor: pointer; }
+  .checkbox-row { display: flex; align-items: flex-start; gap: 6px; margin-top: 12px; font-size: 10px; color: #6B7280; }
+  .checkbox-row input { margin-top: 2px; }
+
+  /* Top bar */
+  .top-bar {
+    display: flex; align-items: center;
+    padding: 12px 16px; gap: 10px;
+    border-bottom: 1px solid #F3F4F6;
+    flex-shrink: 0;
+  }
+  .back-btn { font-size: 18px; cursor: pointer; padding: 4px 6px; border-radius: 6px; }
+  .back-btn:hover { background: #F3F4F6; }
+  .top-title { font-size: 14px; font-weight: 700; flex: 1; }
+
+  /* Filter chips */
+  .filter-chips {
+    display: flex; gap: 6px; padding: 10px 14px;
+    overflow-x: auto; flex-shrink: 0;
+  }
+  .chip {
+    background: #F3F4F6; color: #1F2937;
+    padding: 6px 12px; border-radius: 20px;
+    font-size: 10px; font-weight: 600;
+    white-space: nowrap; cursor: pointer;
+  }
+  .chip:hover { background: #E5E7EB; }
+  .chip.active { background: #DC2626; color: #fff; }
+
+  /* Hotel list */
+  .hotel-list { padding: 8px 14px 14px; overflow-y: auto; }
+  .hotel-card {
+    background: #fff; border: 1px solid #F3F4F6;
+    border-radius: 12px; padding: 10px;
+    display: flex; gap: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    cursor: pointer;
+  }
+  .hotel-card:hover {
+    border-color: #DC2626;
+    box-shadow: 0 4px 12px rgba(220,38,38,0.12);
+  }
+  .hotel-img {
+    width: 70px; height: 70px;
+    background: linear-gradient(135deg, #FCA5A5, #DC2626);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; flex-shrink: 0;
+  }
+  .hotel-img.v2 { background: linear-gradient(135deg, #FDBA74, #F59E0B); }
+  .hotel-img.v3 { background: linear-gradient(135deg, #A78BFA, #7C3AED); }
+  .hotel-img.v4 { background: linear-gradient(135deg, #6EE7B7, #059669); }
+  .hotel-info { flex: 1; min-width: 0; }
+  .hotel-name { font-size: 12px; font-weight: 700; color: #1F2937; }
+  .hotel-rating { font-size: 10px; color: #6B7280; margin-top: 2px; }
+  .hotel-meta { font-size: 9px; color: #9CA3AF; margin-top: 2px; }
+  .hotel-price { font-size: 12px; font-weight: 700; color: #DC2626; margin-top: 4px; }
+  .discount-tag {
+    display: inline-block;
+    background: #DC2626; color: #fff;
+    font-size: 9px; font-weight: 700;
+    padding: 2px 5px; border-radius: 4px;
+    margin-left: 4px;
+  }
+
+  /* Detail */
+  .hero-img {
+    height: 180px;
+    background: linear-gradient(135deg, #FCA5A5, #DC2626);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 60px; position: relative; flex-shrink: 0;
+  }
+  .hero-back, .hero-fav {
+    position: absolute; top: 44px;
+    background: rgba(255,255,255,0.95);
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 16px;
+  }
+  .hero-back { left: 16px; }
+  .hero-fav { right: 16px; transition: all 0.15s; }
+  .hero-fav.faved { background: #DC2626; color: #fff; }
+  .hero-count {
+    position: absolute; bottom: 10px; right: 10px;
+    background: rgba(0,0,0,0.6); color: #fff;
+    padding: 2px 8px; border-radius: 10px; font-size: 10px;
+  }
+  .detail-body { padding: 14px 16px; overflow-y: auto; }
+  .detail-title { font-size: 16px; font-weight: 800; }
+  .detail-rating { font-size: 11px; color: #6B7280; margin-top: 4px; }
+  .status-open { color: #059669; font-weight: 700; font-size: 10px; }
+  .detail-meta { font-size: 10px; color: #6B7280; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+
+  .tabs { display: flex; border-bottom: 1px solid #E5E7EB; margin-top: 12px; }
+  .tab {
+    flex: 1; text-align: center;
+    padding: 10px; font-size: 11px; font-weight: 600;
+    color: #6B7280; cursor: pointer;
+  }
+  .tab:hover { background: #F9FAFB; }
+  .tab.active { color: #DC2626; border-bottom: 2px solid #DC2626; }
+
+  .room-list { padding: 12px 4px; }
+  .room-card {
+    border-bottom: 1px solid #F3F4F6;
+    padding: 10px 4px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .room-info .name { font-size: 12px; font-weight: 700; }
+  .room-info .meta { font-size: 10px; color: #6B7280; margin-top: 2px; }
+  .room-right { text-align: right; }
+  .room-price { font-size: 12px; font-weight: 700; color: #DC2626; }
+  .room-pick {
+    background: #DC2626; color: #fff; border: none;
+    padding: 5px 12px; border-radius: 14px;
+    font-size: 10px; font-weight: 700;
+    margin-top: 4px; cursor: pointer;
+    font-family: inherit;
+  }
+  .room-pick:hover { background: #B91C1C; }
+
+  /* Booking */
+  .form-body { padding: 14px 16px; overflow-y: auto; flex: 1; }
+  .form-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px; border: 1px solid #E5E7EB;
+    border-radius: 10px; margin-top: 8px; font-size: 12px;
+  }
+  .form-row .label-sm { color: #6B7280; font-size: 10px; }
+  .form-row .value { font-weight: 700; color: #1F2937; }
+  .stepper { display: flex; align-items: center; gap: 10px; }
+  .stepper-btn {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #FEE2E2; color: #DC2626;
+    border: none; font-weight: 700; font-size: 14px;
+    cursor: pointer; font-family: inherit;
+  }
+  .stepper-btn:hover { background: #FECACA; }
+  .stepper .count { font-weight: 700; min-width: 16px; text-align: center; }
+
+  .price-breakdown {
+    background: #F9FAFB; border-radius: 10px;
+    padding: 12px; margin-top: 14px;
+  }
+  .price-row {
+    display: flex; justify-content: space-between;
+    font-size: 11px; margin-bottom: 4px; color: #6B7280;
+  }
+  .price-row.total {
+    font-size: 14px; font-weight: 800; color: #DC2626;
+    border-top: 1px dashed #E5E7EB;
+    padding-top: 8px; margin-top: 8px;
+  }
+  .sticky-cta {
+    background: #fff; padding: 12px 16px;
+    border-top: 1px solid #F3F4F6; flex-shrink: 0;
+  }
+
+  /* Payment */
+  .pay-section-title {
+    font-size: 11px; font-weight: 700; color: #6B7280;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin: 14px 16px 8px;
+  }
+  .pay-method {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #F3F4F6;
+    cursor: pointer;
+  }
+  .pay-method:hover { background: #FEF2F2; }
+  .pay-radio {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid #D1D5DB; position: relative; flex-shrink: 0;
+  }
+  .pay-radio.selected { border-color: #DC2626; }
+  .pay-radio.selected::after {
+    content: ''; position: absolute;
+    width: 9px; height: 9px; border-radius: 50%;
+    background: #DC2626;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .pay-name { font-size: 12px; font-weight: 600; flex: 1; }
+  .pay-icon { font-size: 18px; }
+  .promo-input {
+    margin: 14px 16px;
+    border: 1px dashed #DC2626; border-radius: 10px;
+    padding: 10px 12px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: #6B7280;
+  }
+  .promo-apply { margin-left: auto; color: #DC2626; font-weight: 700; cursor: pointer; }
+
+  /* My Bookings */
+  .tab-row { display: flex; border-bottom: 1px solid #E5E7EB; flex-shrink: 0; }
+  .tab-row .tab { border-bottom: 2px solid transparent; }
+  .booking-card {
+    margin: 12px 14px;
+    background: #fff; border: 1px solid #F3F4F6;
+    border-radius: 12px; padding: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+  }
+  .booking-hotel { display: flex; gap: 10px; margin-bottom: 10px; }
+  .booking-status {
+    display: inline-block; font-size: 9px; font-weight: 700;
+    padding: 3px 8px; border-radius: 10px; margin-bottom: 6px;
+  }
+  .status-confirmed { background: #D1FAE5; color: #059669; }
+  .status-pending { background: #FEF3C7; color: #B45309; }
+  .booking-dates { font-size: 10px; color: #6B7280; margin-top: 4px; }
+  .booking-total { font-size: 12px; font-weight: 700; margin-top: 6px; }
+  .booking-actions { display: flex; gap: 6px; margin-top: 10px; }
+  .btn-mini {
+    flex: 1; padding: 7px; border-radius: 8px;
+    font-size: 10px; font-weight: 700; text-align: center;
+    border: 1px solid #DC2626; color: #DC2626;
+    background: #fff; cursor: pointer;
+  }
+  .btn-mini:hover { background: #FEE2E2; }
+  .btn-mini.solid { background: #DC2626; color: #fff; }
+
+  /* Toast */
+  .toast {
+    position: absolute; top: 50px; left: 50%;
+    transform: translateX(-50%);
+    background: #059669; color: #fff;
+    padding: 10px 18px; border-radius: 24px;
+    font-size: 12px; font-weight: 600;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    z-index: 200; opacity: 0; pointer-events: none;
+    transition: all 0.3s; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; top: 60px; }
+
+  /* Wishlist */
+  .wish-card {
+    margin: 10px 14px;
+    background: #fff; border: 1px solid #F3F4F6;
+    border-radius: 12px; padding: 10px;
+    display: flex; gap: 10px; align-items: center;
+    cursor: pointer;
+  }
+  .wish-card:hover { border-color: #DC2626; }
+  .wish-card .heart { color: #DC2626; font-size: 20px; }
+
+  /* Profile */
+  .profile-header {
+    background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+    color: #fff; padding: 24px 18px;
+    text-align: center; flex-shrink: 0;
+  }
+  .profile-avatar {
+    width: 70px; height: 70px; border-radius: 50%;
+    background: #fff; color: #DC2626;
+    margin: 0 auto 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: 700;
+  }
+  .profile-name { font-size: 16px; font-weight: 700; }
+  .profile-email { font-size: 11px; opacity: 0.9; margin-top: 2px; }
+  .profile-menu { flex: 1; padding: 8px 0; overflow-y: auto; }
+  .menu-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 13px; cursor: pointer;
+  }
+  .menu-item:hover { background: #F9FAFB; }
+  .menu-item .icon { font-size: 18px; width: 24px; text-align: center; }
+  .menu-item .arrow { margin-left: auto; color: #9CA3AF; }
+  .menu-item.danger { color: #DC2626; }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">RubyRa Hotel — Mobile Interactive Prototype</h1>
+<p class="page-subtitle">Klik tombol, kartu, kategori, dan bottom nav untuk eksplor flow lengkap</p>
+
+<div class="stage">
+
+  <!-- ============= PHONE ============= -->
+  <div class="phone-frame">
+    <div class="phone-screen">
+      <div class="notch"></div>
+      <div class="toast" id="toast">✓ Berhasil!</div>
+
+      <!-- ===== HOME ===== -->
+      <div class="screen active" id="screen-home">
+        <div class="status-bar"><span>9:41</span><span>📶 📶 🔋</span></div>
+        <div class="header-red">
+          <h1 onclick="showToast('📍 Pilih lokasi (mock)')">📍 Tebet, Jakarta Selatan ▾</h1>
+          <p>Selamat datang di RubyRa Hotel</p>
+        </div>
+        <div class="search-box" onclick="goTo('search-results')">🔍 Mau menginap dimana?</div>
+        <div class="promo-card" onclick="showToast('🎉 Promo applied!')">
+          <div class="promo-tag">PROMO BARU</div>
+          <div class="promo-title">Diskon 50%</div>
+          <div class="promo-sub">Booking hotel pertama kamu</div>
+          <div class="promo-icon">🏨</div>
+        </div>
+        <div class="dots">● ○ ○</div>
+        <div class="section-title">Pilih Kategori</div>
+        <div class="category-grid">
+          <div class="cat-item" onclick="goTo('search-results','Hotel')"><div class="cat-icon" style="background:#FEE2E2;">🏨</div><div class="cat-label">Hotel</div></div>
+          <div class="cat-item" onclick="goTo('search-results','Villa')"><div class="cat-icon" style="background:#FED7AA;">🏖️</div><div class="cat-label">Villa</div></div>
+          <div class="cat-item" onclick="goTo('search-results','Homestay')"><div class="cat-icon" style="background:#DBEAFE;">🏡</div><div class="cat-label">Homestay</div></div>
+          <div class="cat-item" onclick="goTo('search-results','Apartment')"><div class="cat-icon" style="background:#E9D5FF;">🏢</div><div class="cat-label">Apart</div></div>
+          <div class="cat-item" onclick="goTo('search-results','Resort')"><div class="cat-icon" style="background:#FEF3C7;">🏔️</div><div class="cat-label">Resort</div></div>
+          <div class="cat-item" onclick="goTo('search-results','Wisata')"><div class="cat-icon" style="background:#D1FAE5;">🗺️</div><div class="cat-label">Wisata</div></div>
+          <div class="cat-item" onclick="goTo('search-results','Promo')"><div class="cat-icon" style="background:#FCE7F3;">⭐</div><div class="cat-label">Promo</div></div>
+          <div class="cat-item" onclick="showToast('Lainnya')"><div class="cat-icon" style="background:#F3F4F6;">···</div><div class="cat-label">Lainnya</div></div>
+        </div>
+        <div class="section-title">Rekomendasi <span class="link" onclick="goTo('search-results')">Lihat semua</span></div>
+        <div class="reco-grid">
+          <div class="reco-card" onclick="goTo('detail-hotel')">
+            <span class="badge">PROMO</span>
+            <span class="icon">🏨</span>
+            <span class="name">Hotel Melati</span>
+          </div>
+          <div class="reco-card alt" onclick="goTo('detail-hotel')">
+            <span class="icon">🏖️</span>
+            <span class="name">Villa Ubud</span>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item active" onclick="goTo('home')"><span class="icon">🏠</span>Home</div>
+          <div class="nav-item" onclick="goTo('search-results')"><span class="icon">🔍</span>Cari</div>
+          <div class="nav-item" onclick="goTo('my-bookings')"><span class="icon">📋</span>Booking</div>
+          <div class="nav-item" onclick="goTo('wishlist')"><span class="icon">♡</span>Wishlist</div>
+          <div class="nav-item" onclick="goTo('profile')"><span class="icon">👤</span>Profil</div>
+        </div>
+      </div>
+
+      <!-- ===== LOGIN ===== -->
+      <div class="screen" id="screen-login">
+        <div class="status-bar"><span>9:42</span><span>📶 📶 🔋</span></div>
+        <div class="auth-content">
+          <div style="text-align:center; margin-bottom:18px;">
+            <div style="display:inline-block; width:60px; height:60px; background:linear-gradient(135deg,#DC2626,#991B1B); border-radius:18px; line-height:60px; font-size:30px; color:#fff;">💎</div>
+          </div>
+          <div class="auth-title">Masuk</div>
+          <div class="auth-sub">Selamat datang kembali di RubyRa!</div>
+          <div class="input-label">Email</div>
+          <input class="input-box" placeholder="nama@email.com" value="user@rubyra.com">
+          <div class="input-label">Password</div>
+          <input class="input-box" type="password" placeholder="••••••••" value="password">
+          <div class="forgot" onclick="showToast('Link reset terkirim ke email')">Lupa password?</div>
+          <button class="btn-primary" onclick="doLogin()">MASUK</button>
+          <div class="divider">atau</div>
+          <div class="social-btn" onclick="doLogin()">G &nbsp;Masuk dengan Google</div>
+          <div class="social-btn" onclick="doLogin()">f &nbsp;Masuk dengan Facebook</div>
+          <div class="auth-footer">Belum punya akun? <a onclick="goTo('signup')">Daftar di sini</a></div>
+        </div>
+      </div>
+
+      <!-- ===== SIGNUP ===== -->
+      <div class="screen" id="screen-signup">
+        <div class="status-bar"><span>9:43</span><span>📶 📶 🔋</span></div>
+        <div class="top-bar">
+          <span class="back-btn" onclick="goTo('login')">←</span>
+          <span class="top-title">Daftar</span>
+        </div>
+        <div class="auth-content" style="padding-top:8px;">
+          <div class="auth-title">Daftar Akun</div>
+          <div class="auth-sub">Buat akun RubyRa baru kamu</div>
+          <div class="input-label">Nama Lengkap</div>
+          <input class="input-box" placeholder="Nama kamu">
+          <div class="input-label">Email</div>
+          <input class="input-box" placeholder="nama@email.com">
+          <div class="input-label">Nomor HP</div>
+          <input class="input-box" placeholder="+62 812 3456 7890">
+          <div class="input-label">Password</div>
+          <input class="input-box" type="password" placeholder="Min. 8 karakter">
+          <div class="checkbox-row">
+            <input type="checkbox" checked>
+            <span>Saya setuju dengan <a style="color:#DC2626;font-weight:600; cursor:pointer;" onclick="showToast('Syarat & Kebijakan')">Syarat & Kebijakan</a></span>
+          </div>
+          <button class="btn-primary" onclick="doSignup()">DAFTAR</button>
+          <div class="auth-footer">Sudah punya akun? <a onclick="goTo('login')">Masuk di sini</a></div>
+        </div>
+      </div>
+
+      <!-- ===== SEARCH RESULTS ===== -->
+      <div class="screen" id="screen-search-results">
+        <div class="status-bar"><span>9:44</span><span>📶 📶 🔋</span></div>
+        <div class="top-bar">
+          <span class="back-btn" onclick="goTo('home')">←</span>
+          <span class="top-title" id="search-title">Daftar Hotel</span>
+          <span style="cursor:pointer;" onclick="showToast('Search bar (mock)')">🔍</span>
+        </div>
+        <div class="filter-chips">
+          <span class="chip active" onclick="toggleChip(this)">≡ Filter</span>
+          <span class="chip" onclick="toggleChip(this)">Terdekat</span>
+          <span class="chip" onclick="toggleChip(this)">Termurah</span>
+          <span class="chip" onclick="toggleChip(this)">★ Rating</span>
+        </div>
+        <div class="hotel-list">
+          <div class="hotel-card" onclick="goTo('detail-hotel')">
+            <div class="hotel-img">🏨</div>
+            <div class="hotel-info">
+              <div class="hotel-name">Hotel Melati <span class="discount-tag">-30%</span></div>
+              <div class="hotel-rating">★ 4.9 (284 ulasan)</div>
+              <div class="hotel-meta">📍 1.2 km · Kuta</div>
+              <div class="hotel-meta">🕐 24 jam</div>
+              <div class="hotel-price">Mulai Rp 450.000</div>
+            </div>
+          </div>
+          <div class="hotel-card" onclick="goTo('detail-hotel')">
+            <div class="hotel-img v2">🏖️</div>
+            <div class="hotel-info">
+              <div class="hotel-name">Bukara Villa</div>
+              <div class="hotel-rating">★ 4.8 (192 ulasan)</div>
+              <div class="hotel-meta">📍 1.8 km · Ubud</div>
+              <div class="hotel-price">Mulai Rp 320.000</div>
+            </div>
+          </div>
+          <div class="hotel-card" onclick="goTo('detail-hotel')">
+            <div class="hotel-img v3">🏨</div>
+            <div class="hotel-info">
+              <div class="hotel-name">El Grand Resort</div>
+              <div class="hotel-rating">★ 4.7 (421 ulasan)</div>
+              <div class="hotel-meta">📍 2.4 km · Seminyak</div>
+              <div class="hotel-meta">🕐 Free sarapan</div>
+              <div class="hotel-price">Mulai Rp 880.000</div>
+            </div>
+          </div>
+          <div class="hotel-card" onclick="goTo('detail-hotel')">
+            <div class="hotel-img v4">🏨</div>
+            <div class="hotel-info">
+              <div class="hotel-name">Gebu Resort</div>
+              <div class="hotel-rating">★ 4.6 (89 ulasan)</div>
+              <div class="hotel-meta">📍 3.1 km · Pancoran</div>
+              <div class="hotel-price">Mulai Rp 280.000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== DETAIL HOTEL ===== -->
+      <div class="screen" id="screen-detail-hotel">
+        <div class="hero-img">
+          🏨
+          <div class="hero-back" onclick="goTo('search-results')">←</div>
+          <div class="hero-fav" id="fav-btn" onclick="toggleFav()">♡</div>
+          <div class="hero-count">1/12</div>
+        </div>
+        <div class="detail-body">
+          <div class="detail-title">Hotel Melati</div>
+          <div class="detail-rating">★ 4.9 (284 ulasan) · <span class="status-open">● Buka</span></div>
+          <div class="detail-meta">📍 Jl. Pantai Kuta No. 45, Bali</div>
+          <div class="detail-meta">🕐 Check-in 14:00 · Out 12:00</div>
+          <div class="detail-meta">📞 0812-3456-7890</div>
+          <div class="tabs">
+            <div class="tab active" onclick="switchTab(this)">Kamar</div>
+            <div class="tab" onclick="switchTab(this)">Ulasan</div>
+            <div class="tab" onclick="switchTab(this)">Info</div>
+          </div>
+          <div class="room-list">
+            <div class="room-card">
+              <div class="room-info"><div class="name">Standard Room</div><div class="meta">⏱ 1 bed · max 2 tamu</div></div>
+              <div class="room-right"><div class="room-price">Rp 450.000</div><button class="room-pick" onclick="pickRoom('Standard Room', 450000)">+ Pilih</button></div>
+            </div>
+            <div class="room-card">
+              <div class="room-info"><div class="name">Deluxe Room</div><div class="meta">⏱ 1 bed · pool view</div></div>
+              <div class="room-right"><div class="room-price">Rp 650.000</div><button class="room-pick" onclick="pickRoom('Deluxe Room', 650000)">+ Pilih</button></div>
+            </div>
+            <div class="room-card">
+              <div class="room-info"><div class="name">Family Suite</div><div class="meta">⏱ 2 bed · max 4 tamu</div></div>
+              <div class="room-right"><div class="room-price">Rp 950.000</div><button class="room-pick" onclick="pickRoom('Family Suite', 950000)">+ Pilih</button></div>
+            </div>
+            <div class="room-card">
+              <div class="room-info"><div class="name">Honeymoon Suite</div><div class="meta">⏱ 1 bed · ocean view</div></div>
+              <div class="room-right"><div class="room-price">Rp 1.200.000</div><button class="room-pick" onclick="pickRoom('Honeymoon Suite', 1200000)">+ Pilih</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== BOOKING FORM ===== -->
+      <div class="screen" id="screen-booking-form">
+        <div class="status-bar"><span>9:46</span><span>📶 📶 🔋</span></div>
+        <div class="top-bar">
+          <span class="back-btn" onclick="goTo('detail-hotel')">←</span>
+          <span class="top-title">Detail Booking</span>
+        </div>
+        <div class="form-body">
+          <div style="font-weight:700; font-size:13px;">Hotel Melati — <span id="picked-room">Deluxe Room</span></div>
+          <div style="font-size:11px; color:#DC2626; font-weight:600; margin-top:4px;">
+            Rp <span id="picked-price">650.000</span> / malam
+          </div>
+          <div class="form-row">
+            <div><div class="label-sm">📅 Check-in</div><div class="value">15 Jun 2026</div></div>
+            <span style="color:#DC2626; font-size:11px; font-weight:600; cursor:pointer;" onclick="showToast('Date picker (mock)')">Ubah</span>
+          </div>
+          <div class="form-row">
+            <div><div class="label-sm">📅 Check-out</div><div class="value">18 Jun 2026</div></div>
+            <span style="color:#DC2626; font-size:11px; font-weight:600; cursor:pointer;" onclick="showToast('Date picker (mock)')">Ubah</span>
+          </div>
+          <div style="font-size:10px; color:#6B7280; margin:8px 4px;"><span id="nights">3</span> malam menginap</div>
+          <div class="form-row">
+            <span>👥 Dewasa</span>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="step('adults', -1)">−</button>
+              <span class="count" id="adults">2</span>
+              <button class="stepper-btn" onclick="step('adults', 1)">+</button>
+            </div>
+          </div>
+          <div class="form-row">
+            <span>🧒 Anak</span>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="step('children', -1)">−</button>
+              <span class="count" id="children">0</span>
+              <button class="stepper-btn" onclick="step('children', 1)">+</button>
+            </div>
+          </div>
+          <div class="form-row">
+            <span>🛏️ Kamar</span>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="step('rooms', -1)">−</button>
+              <span class="count" id="rooms">1</span>
+              <button class="stepper-btn" onclick="step('rooms', 1)">+</button>
+            </div>
+          </div>
+          <div class="price-breakdown">
+            <div class="price-row">
+              <span>Rp <span id="price-per-night">650.000</span> × <span id="calc-nights">3</span> mlm × <span id="calc-rooms">1</span> kmr</span>
+              <span>Rp <span id="subtotal">1.950.000</span></span>
+            </div>
+            <div class="price-row"><span>Pajak & layanan</span><span>Rp <span id="tax">195.000</span></span></div>
+            <div class="price-row total"><span>Total</span><span>Rp <span id="total">2.145.000</span></span></div>
+          </div>
+        </div>
+        <div class="sticky-cta">
+          <button class="btn-primary" style="margin-top:0;" onclick="goTo('payment')">LANJUT BAYAR</button>
+        </div>
+      </div>
+
+      <!-- ===== PAYMENT ===== -->
+      <div class="screen" id="screen-payment">
+        <div class="status-bar"><span>9:47</span><span>📶 📶 🔋</span></div>
+        <div class="top-bar">
+          <span class="back-btn" onclick="goTo('booking-form')">←</span>
+          <span class="top-title">Pembayaran</span>
+        </div>
+        <div style="background:#FEF2F2; margin:12px 14px; padding:12px; border-radius:10px;">
+          <div style="font-weight:700; font-size:12px;">🏨 Hotel Melati</div>
+          <div style="font-size:11px; color:#6B7280; margin-top:3px;"><span id="pay-room">Deluxe Room</span></div>
+          <div style="font-size:11px; color:#6B7280; margin-top:2px;">15–18 Jun 2026 · 2 tamu</div>
+        </div>
+        <div class="pay-section-title">Pilih Metode Pembayaran</div>
+        <div class="pay-method" onclick="pickPay(this)">
+          <div class="pay-radio selected"></div>
+          <span class="pay-icon">💳</span>
+          <span class="pay-name">Kartu Kredit / Debit</span>
+        </div>
+        <div class="pay-method" onclick="pickPay(this)">
+          <div class="pay-radio"></div>
+          <span class="pay-icon">🏦</span>
+          <div style="flex:1;">
+            <div class="pay-name">Transfer Bank</div>
+            <div style="font-size:9px; color:#9CA3AF;">BCA · BNI · Mandiri</div>
+          </div>
+        </div>
+        <div class="pay-method" onclick="pickPay(this)">
+          <div class="pay-radio"></div>
+          <span class="pay-icon">📱</span>
+          <div style="flex:1;">
+            <div class="pay-name">E-Wallet</div>
+            <div style="font-size:9px; color:#9CA3AF;">GoPay · OVO · Dana</div>
+          </div>
+        </div>
+        <div class="pay-method" onclick="pickPay(this)">
+          <div class="pay-radio"></div>
+          <span class="pay-icon">🏪</span>
+          <span class="pay-name">Indomaret / Alfamart</span>
+        </div>
+        <div class="promo-input">
+          🎟️ <span style="color:#1F2937;">Punya kode promo?</span>
+          <span class="promo-apply" onclick="showToast('Kode promo berhasil dipakai!')">PAKAI</span>
+        </div>
+        <div style="padding:10px 16px; font-size:13px; font-weight:800; display:flex; justify-content:space-between;">
+          <span>Total Bayar</span>
+          <span style="color:#DC2626;">Rp <span id="pay-total">2.145.000</span></span>
+        </div>
+        <div class="sticky-cta">
+          <button class="btn-primary" style="margin-top:0;" onclick="doPay()">BAYAR SEKARANG</button>
+        </div>
+      </div>
+
+      <!-- ===== MY BOOKINGS ===== -->
+      <div class="screen" id="screen-my-bookings">
+        <div class="status-bar"><span>9:48</span><span>📶 📶 🔋</span></div>
+        <div style="padding:16px;"><div style="font-weight:800; font-size:18px;">Booking Saya</div></div>
+        <div class="tab-row">
+          <div class="tab active" onclick="switchTab(this)">Aktif</div>
+          <div class="tab" onclick="switchTab(this)">Selesai</div>
+          <div class="tab" onclick="switchTab(this)">Dibatalkan</div>
+        </div>
+        <div style="flex:1; overflow-y:auto;">
+          <div class="booking-card">
+            <div class="booking-hotel">
+              <div class="hotel-img" style="width:50px; height:50px; font-size:24px;">🏨</div>
+              <div style="flex:1;">
+                <div style="font-weight:700; font-size:12px;">Hotel Melati</div>
+                <div style="font-size:10px; color:#6B7280;">Deluxe Room</div>
+              </div>
+            </div>
+            <div class="booking-status status-confirmed">● CONFIRMED</div>
+            <div class="booking-dates">📅 15–18 Jun 2026 · 3 malam · 2 tamu</div>
+            <div class="booking-total">Total: Rp 2.145.000</div>
+            <div class="booking-actions">
+              <div class="btn-mini" onclick="goTo('detail-hotel')">Detail</div>
+              <div class="btn-mini" onclick="showToast('📞 Menghubungi hotel...')">Hubungi Hotel</div>
+            </div>
+          </div>
+          <div class="booking-card">
+            <div class="booking-hotel">
+              <div class="hotel-img v2" style="width:50px; height:50px; font-size:24px;">🏖️</div>
+              <div style="flex:1;">
+                <div style="font-weight:700; font-size:12px;">Bukara Villa</div>
+                <div style="font-size:10px; color:#6B7280;">Standard Room</div>
+              </div>
+            </div>
+            <div class="booking-status status-pending">● MENUNGGU BAYAR</div>
+            <div class="booking-dates">📅 22–24 Jul 2026 · 2 malam · 2 tamu</div>
+            <div class="booking-total">Total: Rp 720.000</div>
+            <div class="booking-actions">
+              <div class="btn-mini solid" onclick="goTo('payment')">Bayar</div>
+              <div class="btn-mini" onclick="confirmCancel()">Batal</div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="goTo('home')"><span class="icon">🏠</span>Home</div>
+          <div class="nav-item" onclick="goTo('search-results')"><span class="icon">🔍</span>Cari</div>
+          <div class="nav-item active" onclick="goTo('my-bookings')"><span class="icon">📋</span>Booking</div>
+          <div class="nav-item" onclick="goTo('wishlist')"><span class="icon">♡</span>Wishlist</div>
+          <div class="nav-item" onclick="goTo('profile')"><span class="icon">👤</span>Profil</div>
+        </div>
+      </div>
+
+      <!-- ===== WISHLIST ===== -->
+      <div class="screen" id="screen-wishlist">
+        <div class="status-bar"><span>9:49</span><span>📶 📶 🔋</span></div>
+        <div style="padding:16px;"><div style="font-weight:800; font-size:18px;">Wishlist Saya</div></div>
+        <div style="flex:1; overflow-y:auto;">
+          <div class="wish-card" onclick="goTo('detail-hotel')">
+            <div class="hotel-img" style="width:60px; height:60px; font-size:28px;">🏨</div>
+            <div style="flex:1;">
+              <div style="font-weight:700; font-size:12px;">Hotel Melati</div>
+              <div style="font-size:10px; color:#6B7280;">★ 4.9 · Bali</div>
+              <div style="font-size:11px; color:#DC2626; font-weight:700; margin-top:2px;">Rp 450.000</div>
+            </div>
+            <div class="heart">♥</div>
+          </div>
+          <div class="wish-card" onclick="goTo('detail-hotel')">
+            <div class="hotel-img v3" style="width:60px; height:60px; font-size:28px;">🏨</div>
+            <div style="flex:1;">
+              <div style="font-weight:700; font-size:12px;">El Grand Resort</div>
+              <div style="font-size:10px; color:#6B7280;">★ 4.7 · Seminyak</div>
+              <div style="font-size:11px; color:#DC2626; font-weight:700; margin-top:2px;">Rp 880.000</div>
+            </div>
+            <div class="heart">♥</div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="goTo('home')"><span class="icon">🏠</span>Home</div>
+          <div class="nav-item" onclick="goTo('search-results')"><span class="icon">🔍</span>Cari</div>
+          <div class="nav-item" onclick="goTo('my-bookings')"><span class="icon">📋</span>Booking</div>
+          <div class="nav-item active" onclick="goTo('wishlist')"><span class="icon">♡</span>Wishlist</div>
+          <div class="nav-item" onclick="goTo('profile')"><span class="icon">👤</span>Profil</div>
+        </div>
+      </div>
+
+      <!-- ===== PROFILE ===== -->
+      <div class="screen" id="screen-profile">
+        <div class="status-bar"><span>9:50</span><span>📶 📶 🔋</span></div>
+        <div class="profile-header">
+          <div class="profile-avatar" id="profile-avatar">👤</div>
+          <div class="profile-name" id="profile-name">Guest User</div>
+          <div class="profile-email" id="profile-email">Silakan login</div>
+        </div>
+        <div class="profile-menu">
+          <div class="menu-item" onclick="goTo('my-bookings')"><span class="icon">📋</span> Booking Saya <span class="arrow">›</span></div>
+          <div class="menu-item" onclick="goTo('wishlist')"><span class="icon">♡</span> Wishlist <span class="arrow">›</span></div>
+          <div class="menu-item" onclick="showToast('Voucher: 3 tersedia')"><span class="icon">🎟️</span> Voucher Saya <span class="arrow">›</span></div>
+          <div class="menu-item" onclick="showToast('Pengaturan (mock)')"><span class="icon">⚙️</span> Pengaturan <span class="arrow">›</span></div>
+          <div class="menu-item" onclick="showToast('Pusat bantuan (mock)')"><span class="icon">❓</span> Pusat Bantuan <span class="arrow">›</span></div>
+          <div class="menu-item danger" onclick="doAuthAction()">
+            <span class="icon">🚪</span> <span id="auth-label">Login / Masuk</span> <span class="arrow">›</span>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="goTo('home')"><span class="icon">🏠</span>Home</div>
+          <div class="nav-item" onclick="goTo('search-results')"><span class="icon">🔍</span>Cari</div>
+          <div class="nav-item" onclick="goTo('my-bookings')"><span class="icon">📋</span>Booking</div>
+          <div class="nav-item" onclick="goTo('wishlist')"><span class="icon">♡</span>Wishlist</div>
+          <div class="nav-item active" onclick="goTo('profile')"><span class="icon">👤</span>Profil</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============= SIDE NAVIGATOR ============= -->
+  <div class="side-panel">
+    <h3>🗺️ Navigator</h3>
+    <ul class="nav-list" id="nav-list">
+      <li data-screen="home"><span class="num">1</span> Home</li>
+      <li data-screen="login"><span class="num">2</span> Login</li>
+      <li data-screen="signup"><span class="num">3</span> Daftar</li>
+      <li data-screen="search-results"><span class="num">4</span> Daftar Hotel</li>
+      <li data-screen="detail-hotel"><span class="num">5</span> Detail Hotel</li>
+      <li data-screen="booking-form"><span class="num">6</span> Form Booking</li>
+      <li data-screen="payment"><span class="num">7</span> Pembayaran</li>
+      <li data-screen="my-bookings"><span class="num">8</span> Booking Saya</li>
+      <li data-screen="wishlist"><span class="num">9</span> Wishlist</li>
+      <li data-screen="profile"><span class="num">10</span> Profil</li>
+    </ul>
+    <div class="side-tip">
+      <strong>Tips:</strong> Klik kategori di Home, kartu hotel, atau bottom nav untuk navigasi. Untuk login, klik tab Profil → Login, atau buka langsung dari Navigator.
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const state = {
+    pickedRoom: 'Deluxe Room',
+    pickedPrice: 650000,
+    adults: 2,
+    children: 0,
+    rooms: 1,
+    nights: 3,
+    loggedIn: false,
+    userName: '',
+    userEmail: ''
+  };
+
+  function goTo(screen, categoryLabel) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('screen-' + screen);
+    if (target) { target.classList.add('active'); target.scrollTop = 0; }
+    document.querySelectorAll('#nav-list li').forEach(li => {
+      li.classList.toggle('current', li.dataset.screen === screen);
+    });
+    const titleEl = document.getElementById('search-title');
+    if (titleEl) {
+      titleEl.textContent = (screen === 'search-results' && categoryLabel)
+        ? 'Daftar ' + categoryLabel : 'Daftar Hotel';
+    }
+  }
+  document.querySelectorAll('#nav-list li').forEach(li => {
+    li.addEventListener('click', () => goTo(li.dataset.screen));
+  });
+
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  function doLogin() {
+    state.loggedIn = true;
+    state.userName = 'Sarah Wijaya';
+    state.userEmail = 'user@rubyra.com';
+    updateProfile();
+    showToast('✓ Berhasil masuk!');
+    setTimeout(() => goTo('home'), 600);
+  }
+  function doSignup() {
+    state.loggedIn = true;
+    state.userName = 'User Baru';
+    state.userEmail = 'newuser@rubyra.com';
+    updateProfile();
+    showToast('✓ Akun berhasil dibuat!');
+    setTimeout(() => goTo('home'), 600);
+  }
+  function doAuthAction() {
+    if (state.loggedIn) {
+      state.loggedIn = false;
+      updateProfile();
+      showToast('Sudah logout');
+    } else {
+      goTo('login');
+    }
+  }
+  function updateProfile() {
+    const nameEl = document.getElementById('profile-name');
+    const emailEl = document.getElementById('profile-email');
+    const labelEl = document.getElementById('auth-label');
+    const avatar = document.getElementById('profile-avatar');
+    if (state.loggedIn) {
+      nameEl.textContent = state.userName;
+      emailEl.textContent = state.userEmail;
+      labelEl.textContent = 'Logout';
+      avatar.textContent = state.userName.charAt(0);
+    } else {
+      nameEl.textContent = 'Guest User';
+      emailEl.textContent = 'Silakan login';
+      labelEl.textContent = 'Login / Masuk';
+      avatar.textContent = '👤';
+    }
+  }
+
+  function toggleChip(el) {
+    el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+  function switchTab(el) {
+    el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+  function toggleFav() {
+    const btn = document.getElementById('fav-btn');
+    btn.classList.toggle('faved');
+    btn.textContent = btn.classList.contains('faved') ? '♥' : '♡';
+    showToast(btn.classList.contains('faved') ? '♥ Disimpan ke wishlist' : 'Dihapus dari wishlist');
+  }
+
+  function pickRoom(name, price) {
+    state.pickedRoom = name;
+    state.pickedPrice = price;
+    document.getElementById('picked-room').textContent = name;
+    document.getElementById('picked-price').textContent = formatNum(price);
+    document.getElementById('price-per-night').textContent = formatNum(price);
+    document.getElementById('pay-room').textContent = name;
+    recalcPrice();
+    goTo('booking-form');
+  }
+  function step(field, delta) {
+    const min = (field === 'adults' || field === 'rooms') ? 1 : 0;
+    state[field] = Math.max(min, state[field] + delta);
+    document.getElementById(field).textContent = state[field];
+    recalcPrice();
+  }
+  function recalcPrice() {
+    const subtotal = state.pickedPrice * state.nights * state.rooms;
+    const tax = Math.round(subtotal * 0.1);
+    const total = subtotal + tax;
+    document.getElementById('calc-nights').textContent = state.nights;
+    document.getElementById('calc-rooms').textContent = state.rooms;
+    document.getElementById('subtotal').textContent = formatNum(subtotal);
+    document.getElementById('tax').textContent = formatNum(tax);
+    document.getElementById('total').textContent = formatNum(total);
+    document.getElementById('pay-total').textContent = formatNum(total);
+  }
+  function formatNum(n) { return n.toLocaleString('id-ID'); }
+
+  function pickPay(el) {
+    document.querySelectorAll('#screen-payment .pay-radio').forEach(r => r.classList.remove('selected'));
+    el.querySelector('.pay-radio').classList.add('selected');
+  }
+  function doPay() {
+    showToast('💳 Memproses pembayaran...');
+    setTimeout(() => {
+      showToast('✓ Pembayaran berhasil!');
+      setTimeout(() => goTo('my-bookings'), 800);
+    }, 1200);
+  }
+  function confirmCancel() {
+    if (confirm('Batalkan booking?')) showToast('Booking dibatalkan');
+  }
+
+  goTo('home');
+</script>
+
+</body>
+</html>

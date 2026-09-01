@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RubyRa Stays — Booking Hotel, Villa &amp; Resort Terbaik di Indonesia</title>
+<link rel="icon" href="assets/img-01.svg">
+<link rel="apple-touch-icon" href="assets/img-01.svg">
+<meta name="description" content="RubyRa Stays — pesan hotel, villa, guest house, resort & homestay terbaik di Indonesia dengan harga transparan dan mudah.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@500;600;700;800&family=Inria+Serif:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ruby:#800002; --ruby-dark:#5C0001; --ruby-light:#A3232A;
+    --gold:#C8A24B; --gold-light:#E4CB82;
+    --bg:#F5F5F5; --card:#FFFFFF; --ink:#1F2937; --muted:#6B7280; --line:#E5E7EB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;}
+  a{text-decoration:none;color:inherit;cursor:pointer;}
+  button,input,select,textarea{font-family:inherit;}
+  button{cursor:pointer;border:none;background:none;}
+  img{display:block;max-width:100%;}
+  h1,h2,h3{font-family:'Poppins',sans-serif;}
+
+  /* ===== Screen system ===== */
+  .screen{display:none;animation:fade .25s ease;}
+  .screen.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  /* ===== Top header (shared) ===== */
+  header.topbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,.04);}
+  .topbar-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:10px 24px;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand img{height:50px;width:auto;max-width:140px;object-fit:contain;}
+  .brand .bn{font-family:'Poppins';font-weight:800;font-size:20px;color:var(--ruby);line-height:1;}
+  .brand .bn small{display:block;font-family:'Inria Serif';font-weight:400;font-style:italic;font-size:12px;color:var(--gold);letter-spacing:1px;}
+  .searchbox{flex:1;display:flex;align-items:center;gap:8px;background:#F3F4F6;border:1px solid var(--line);border-radius:24px;padding:9px 16px;max-width:440px;}
+  .searchbox input{flex:1;border:none;background:none;outline:none;font-size:14px;}
+  .navlinks{display:flex;align-items:center;gap:18px;font-size:13px;font-weight:600;color:#374151;}
+  .navlinks a:hover{color:var(--ruby);}
+  .btn{border-radius:22px;padding:9px 20px;font-weight:700;font-size:13px;transition:.15s;white-space:nowrap;}
+  .btn-primary{background:var(--ruby);color:#fff;}
+  .btn-primary:hover{background:var(--ruby-dark);}
+  .btn-ghost{background:#fff;color:var(--ruby);border:1.5px solid var(--ruby);}
+  .btn-ghost:hover{background:#FEF2F2;}
+  .btn-gold{background:linear-gradient(135deg,var(--gold),#B68A2E);color:#fff;}
+
+  /* ===== Hero ===== */
+  .hero{position:relative;height:340px;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;}
+  .hero::before{content:"";position:absolute;inset:0;background:url('assets/img-02.jpg') center/cover;}
+  .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(92,0,1,.55),rgba(128,0,2,.78));}
+  .hero-content{position:relative;z-index:2;max-width:720px;padding:0 20px;}
+  .hero-content h1{font-size:40px;font-weight:800;margin-bottom:10px;text-shadow:0 2px 12px rgba(0,0,0,.4);}
+  .hero-content p{font-size:16px;opacity:.95;margin-bottom:22px;}
+  .hero-search{display:flex;gap:8px;background:#fff;border-radius:14px;padding:8px;box-shadow:0 12px 30px rgba(0,0,0,.3);}
+  .hero-search input,.hero-search select{flex:1;border:none;outline:none;padding:12px 14px;font-size:14px;color:var(--ink);border-radius:8px;background:#F9FAFB;}
+  .hero-search button{padding:0 26px;}
+
+  /* ===== Layout wrap ===== */
+  .wrap{max-width:1200px;margin:0 auto;padding:34px 24px 60px;}
+  .section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  .section-title h2{font-size:22px;color:var(--ruby);font-weight:700;}
+  .section-title a{font-size:13px;font-weight:600;color:var(--gold);}
+
+  /* ===== Categories ===== */
+  .cats{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:40px;}
+  .cat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 8px;text-align:center;transition:.18s;cursor:pointer;}
+  .cat:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(128,0,2,.14);border-color:var(--ruby-light);}
+  .cat .ic{width:74px;height:74px;margin:0 auto 10px;border-radius:50%;background:#F3F4F6 center/cover;border:2px solid var(--gold-light);}
+  .cat span{font-size:12.5px;font-weight:700;color:#374151;}
+
+  /* ===== Home main grid (recommended + deals) ===== */
+  .home-cols{display:grid;grid-template-columns:1fr 360px;gap:28px;}
+  @media(max-width:980px){.home-cols{grid-template-columns:1fr;}}
+
+  /* ===== Property cards ===== */
+  .pcards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  @media(max-width:640px){.pcards{grid-template-columns:1fr;} .cats{grid-template-columns:repeat(3,1fr);}}
+  .pcard{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:.18s;cursor:pointer;display:flex;flex-direction:column;}
+  .pcard:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,.12);}
+  .pcard .ph{height:170px;background:#ddd center/cover;position:relative;}
+  .pcard .badge{position:absolute;top:10px;left:10px;background:var(--ruby);color:#fff;font-size:11px;font-weight:700;padding:4px 9px;border-radius:8px;}
+  .pcard .heart{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;font-size:17px;line-height:1;}
+  .pcard .heart.on{color:var(--ruby);}
+  .pcard .pb{padding:13px 14px 15px;flex:1;display:flex;flex-direction:column;gap:5px;}
+  .pcard .pt{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .pcard .pn{font-weight:700;font-size:15px;color:var(--ink);}
+  .pcard .type{font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;}
+  .pcard .loc{font-size:12.5px;color:var(--muted);}
+  .pcard .rt{font-size:12.5px;color:#374151;font-weight:600;}
+  .pcard .pr{margin-top:auto;display:flex;align-items:baseline;justify-content:space-between;padding-top:8px;}
+  .pcard .price{font-weight:800;color:var(--ruby);font-size:17px;}
+  .pcard .price small{font-weight:500;color:var(--muted);font-size:11px;}
+  .pcard .old{font-size:12px;color:#9CA3AF;text-decoration:line-through;}
+
+  /* ===== Special deals ===== */
+  .deals{display:flex;flex-direction:column;gap:14px;}
+  .deal{border-radius:16px;padding:18px;color:#fff;position:relative;overflow:hidden;cursor:pointer;transition:.18s;}
+  .deal:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(0,0,0,.18);}
+  .deal h3{font-size:17px;font-weight:800;margin-bottom:6px;}
+  .deal p{font-size:12.5px;opacity:.95;margin-bottom:12px;line-height:1.45;}
+  .deal .dbtn{display:inline-block;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.5);padding:6px 14px;border-radius:18px;font-size:12px;font-weight:700;}
+  .deal.d1{background:linear-gradient(135deg,#800002,#A3232A);}
+  .deal.d2{background:linear-gradient(135deg,#B68A2E,#C8A24B);}
+  .deal.d3{background:linear-gradient(135deg,#5C0001,#800002);}
+  .deal.d4{background:linear-gradient(135deg,#7A1E22,#C8A24B);}
+
+  /* ===== Footer ===== */
+  footer{background:var(--ruby-dark);color:#fff;padding:38px 24px 26px;}
+  .foot-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:30px;}
+  @media(max-width:760px){.foot-inner{grid-template-columns:1fr 1fr;}}
+  footer h4{font-family:'Poppins';font-size:14px;margin-bottom:12px;color:var(--gold-light);}
+  footer a,footer p{font-size:13px;color:#F3D9DA;display:block;margin-bottom:7px;opacity:.9;}
+  footer a:hover{opacity:1;color:#fff;}
+  .foot-brand{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .foot-brand img{width:48px;height:48px;}
+  .foot-bottom{max-width:1200px;margin:24px auto 0;border-top:1px solid rgba(255,255,255,.18);padding-top:16px;font-size:12px;opacity:.8;text-align:center;}
+
+  /* ===== Auth pages ===== */
+  .auth-wrap{min-height:calc(100vh - 0px);display:flex;align-items:center;justify-content:center;padding:40px 20px;background:linear-gradient(135deg,#5C0001,#800002);}
+  .auth-card{background:#fff;border-radius:20px;box-shadow:0 24px 60px rgba(0,0,0,.35);width:100%;max-width:420px;padding:34px 30px;}
+  .auth-card .brand{justify-content:center;margin-bottom:8px;flex-direction:column;text-align:center;gap:6px;}
+  .auth-card .brand img{width:70px;height:70px;}
+  .auth-card h2{text-align:center;color:var(--ruby);font-size:22px;margin-bottom:4px;}
+  .auth-card .sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:22px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;color:#374151;}
+  .field input,.field select{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font-size:14px;outline:none;transition:.15s;}
+  .field input:focus,.field select:focus{border-color:var(--ruby);box-shadow:0 0 0 3px rgba(128,0,2,.1);}
+  .auth-card .btn-primary{width:100%;padding:13px;font-size:15px;margin-top:6px;}
+  .auth-alt{text-align:center;font-size:13px;color:var(--muted);margin-top:18px;}
+  .auth-alt a{color:var(--ruby);font-weight:700;}
+  .divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:#9CA3AF;font-size:12px;}
+  .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line);}
+  .social{display:flex;gap:10px;}
+  .social button{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:10px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .social button:hover{background:#F9FAFB;}
+  .back-home{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:13px;font-weight:600;position:absolute;top:24px;left:24px;}
+
+  /* ===== Results ===== */
+  .results-layout{display:grid;grid-template-columns:268px 1fr;gap:24px;}
+  @media(max-width:860px){.results-layout{grid-template-columns:1fr;}}
+  .filters{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;height:fit-content;position:sticky;top:84px;}
+  .filters h3{font-size:15px;color:var(--ruby);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+  .filters h3 button{font-size:11px;color:var(--muted);font-weight:600;}
+  .fgroup{border-top:1px solid var(--line);padding:14px 0;}
+  .fgroup:first-of-type{border-top:none;padding-top:0;}
+  .fgroup .ft{font-size:12.5px;font-weight:700;color:#374151;margin-bottom:9px;text-transform:uppercase;letter-spacing:.4px;}
+  .frow{display:flex;align-items:center;gap:8px;font-size:13px;color:#4B5563;margin-bottom:7px;cursor:pointer;}
+  .frow input{accent-color:var(--ruby);width:15px;height:15px;}
+  .price-val{font-weight:700;color:var(--ruby);font-size:13px;}
+  input[type=range]{width:100%;accent-color:var(--ruby);}
+
+  .results-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
+  .results-head .cnt{font-size:14px;color:var(--muted);}
+  .results-head .cnt b{color:var(--ink);}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;}
+  .chip{font-size:12px;font-weight:600;padding:6px 13px;border-radius:18px;background:#fff;border:1px solid var(--line);color:#4B5563;cursor:pointer;}
+  .chip.active{background:var(--ruby);color:#fff;border-color:var(--ruby);}
+  .activetags{margin-bottom:12px;}
+  .activetags span{display:inline-block;background:#FEF2F2;color:var(--ruby);font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:12px;margin:0 6px 6px 0;}
+  .reslist{display:flex;flex-direction:column;gap:14px;}
+  .resrow{display:flex;gap:0;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;transition:.16s;}
+  .resrow:hover{box-shadow:0 10px 24px rgba(0,0,0,.1);transform:translateY(-2px);}
+  .resrow .rimg{width:220px;min-width:220px;background:#ddd center/cover;position:relative;}
+  @media(max-width:560px){.resrow{flex-direction:column;} .resrow .rimg{width:100%;height:160px;}}
+  .resrow .badge{position:absolute;top:10px;left:10px;background:var(--ruby);color:#fff;font-size:11px;font-weight:700;padding:4px 9px;border-radius:8px;}
+  .resrow .rbody{flex:1;padding:15px 16px;display:flex;flex-direction:column;gap:5px;}
+  .resrow .rn{font-weight:700;font-size:16px;}
+  .resrow .amlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+  .resrow .amlist span{font-size:11px;background:#F3F4F6;color:#4B5563;padding:3px 8px;border-radius:8px;}
+  .resrow .rright{width:170px;min-width:170px;border-left:1px solid var(--line);padding:15px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;text-align:right;}
+  @media(max-width:560px){.resrow .rright{width:100%;border-left:none;border-top:1px solid var(--line);flex-direction:row;align-items:center;}}
+  .empty{text-align:center;padding:60px 20px;color:var(--muted);}
+  .empty .big{font-size:46px;margin-bottom:10px;}
+
+  /* ===== Detail ===== */
+  .detail-hero{height:360px;background:#ccc center/cover;position:relative;}
+  .detail-hero .topbtns{position:absolute;top:18px;left:0;right:0;display:flex;justify-content:space-between;padding:0 24px;max-width:1200px;margin:0 auto;}
+  .circle-btn{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.2);}
+  .detail-grid{display:grid;grid-template-columns:1fr 340px;gap:28px;}
+  @media(max-width:880px){.detail-grid{grid-template-columns:1fr;}}
+  .dt-head h1{font-size:26px;color:var(--ink);margin-bottom:6px;}
+  .dt-head .dmeta{color:var(--muted);font-size:14px;margin-bottom:10px;}
+  .stars{color:var(--gold);}
+  .amgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:18px 0;}
+  .amgrid div{background:#F9FAFB;border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-size:13px;font-weight:600;color:#374151;}
+  .dt-sec{border-top:1px solid var(--line);padding:20px 0;}
+  .dt-sec h3{font-size:17px;color:var(--ruby);margin-bottom:10px;}
+  .dt-sec p{color:#4B5563;font-size:14px;line-height:1.7;}
+  .roomrow{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px;cursor:pointer;transition:.15s;}
+  .roomrow:hover{border-color:var(--ruby-light);background:#FFF9F9;}
+  .roomrow.sel{border-color:var(--ruby);background:#FFF9F9;box-shadow:0 0 0 2px rgba(128,0,2,.12);}
+  .roomrow .rname{font-weight:700;font-size:14px;}
+  .roomrow .rdesc{font-size:12.5px;color:var(--muted);}
+  .booking-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;position:sticky;top:84px;box-shadow:0 8px 24px rgba(0,0,0,.06);}
+  .booking-card .bp{font-size:26px;font-weight:800;color:var(--ruby);}
+  .booking-card .bp small{font-size:13px;color:var(--muted);font-weight:500;}
+  .booking-card .old{color:#9CA3AF;text-decoration:line-through;font-size:14px;}
+
+  /* ===== Generic page container ===== */
+  .page-pad{max-width:1200px;margin:0 auto;padding:30px 24px 60px;}
+  .crumb{font-size:13px;color:var(--muted);margin-bottom:16px;}
+  .crumb a{color:var(--ruby);font-weight:600;}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr;}}
+
+  /* summary box */
+  .summary{background:#FFF9F9;border:1px solid #F3D2D3;border-radius:14px;padding:18px;}
+  .summary h3{color:var(--ruby);font-size:16px;margin-bottom:12px;}
+  .sline{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:9px;color:#4B5563;}
+  .sline.total{border-top:1px dashed #E0B6B7;padding-top:11px;margin-top:11px;font-size:17px;font-weight:800;color:var(--ruby);}
+
+  /* payment methods */
+  .pays{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+  .pay{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;cursor:pointer;transition:.15s;}
+  .pay:hover{border-color:var(--ruby-light);}
+  .pay.sel{border-color:var(--ruby);background:#FFF9F9;box-shadow:0 0 0 3px rgba(128,0,2,.08);}
+  .pay .ico{font-size:22px;}
+  .pay .pl{font-weight:700;font-size:14px;}
+  .pay .pd{font-size:12px;color:var(--muted);}
+  .pay .radio{margin-left:auto;width:18px;height:18px;border-radius:50%;border:2px solid #CBD5E1;}
+  .pay.sel .radio{border-color:var(--ruby);background:radial-gradient(circle,#fff 32%,var(--ruby) 36%);}
+
+  /* bookings & wishlist */
+  .bk{display:flex;gap:0;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+  .bk .bimg{width:150px;min-width:150px;background:#ddd center/cover;}
+  .bk .bbody{flex:1;padding:15px;}
+  .bk .status{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;}
+  .status.confirmed{background:#DCFCE7;color:#15803D;}
+  .status.upcoming{background:#FEF3C7;color:#B45309;}
+  .status.done{background:#E5E7EB;color:#4B5563;}
+
+  /* FAQ */
+  .faq{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden;background:#fff;}
+  .faq q{display:flex;justify-content:space-between;align-items:center;padding:15px 18px;font-weight:700;font-size:14.5px;cursor:pointer;color:var(--ink);}
+  .faq .a{max-height:0;overflow:hidden;transition:.25s;padding:0 18px;color:#4B5563;font-size:13.5px;}
+  .faq.open .a{max-height:200px;padding:0 18px 16px;}
+  .faq.open q .arr{transform:rotate(180deg);}
+
+  /* toast */
+  #toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(20px);background:#1F2937;color:#fff;padding:13px 22px;border-radius:30px;font-size:14px;font-weight:600;box-shadow:0 12px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:.3s;z-index:999;max-width:90%;}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* avatar button in topbar */
+  .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--ruby),var(--ruby-light));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;cursor:pointer;border:2px solid var(--gold-light);}
+
+  /* ===== Detail gallery ===== */
+  .gallery{display:grid;grid-template-columns:1fr 96px;gap:10px;}
+  .gallery .main{height:380px;border-radius:14px;background:#ccc center/cover;position:relative;overflow:hidden;}
+  .gallery .thumbs{display:flex;flex-direction:column;gap:10px;}
+  .gallery .thumbs .th{flex:1;border-radius:10px;background:#ddd center/cover;cursor:pointer;border:2px solid transparent;min-height:60px;transition:.15s;}
+  .gallery .thumbs .th:hover{border-color:var(--gold);}
+  .gallery .thumbs .th.on{border-color:var(--ruby);}
+  .gallery .main .gtag{position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;font-weight:600;padding:5px 11px;border-radius:14px;}
+
+  /* ===== Profile / Account ===== */
+  .profile-head{background:linear-gradient(135deg,var(--ruby),var(--ruby-dark));border-radius:18px;padding:26px;color:#fff;display:flex;align-items:center;gap:18px;margin-bottom:22px;}
+  .profile-head .pa{width:78px;height:78px;border-radius:50%;background:rgba(255,255,255,.18);border:3px solid var(--gold-light);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;}
+  .profile-head h2{font-size:22px;margin-bottom:3px;}
+  .profile-head .pe{font-size:13.5px;opacity:.9;}
+  .profile-head .pstats{display:flex;gap:26px;margin-left:auto;text-align:center;}
+  .profile-head .pstats b{display:block;font-size:22px;}
+  .profile-head .pstats span{font-size:11.5px;opacity:.85;}
+  @media(max-width:640px){.profile-head{flex-direction:column;text-align:center;}.profile-head .pstats{margin-left:0;}}
+  .acct-grid{display:grid;grid-template-columns:240px 1fr;gap:22px;align-items:start;}
+  @media(max-width:760px){.acct-grid{grid-template-columns:1fr;}}
+  .acct-menu{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .acct-menu button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px 16px;font-size:14px;font-weight:600;color:#374151;border-bottom:1px solid var(--line);transition:.12s;}
+  .acct-menu button:last-child{border-bottom:none;}
+  .acct-menu button:hover{background:#FEF2F2;color:var(--ruby);}
+  .acct-menu button.active{background:#FFF9F9;color:var(--ruby);border-left:3px solid var(--ruby);}
+
+  /* two-column page layout that collapses on mobile */
+  .two-col{display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start;}
+  @media(max-width:760px){.two-col{grid-template-columns:1fr;}}
+  .two-col.wide{grid-template-columns:1fr 340px;}
+  @media(max-width:880px){.two-col.wide{grid-template-columns:1fr;}}
+
+  /* ===== Mobile responsive (shared) ===== */
+  @media(max-width:760px){
+    .topbar-inner{flex-wrap:wrap;gap:10px;padding:10px 16px;}
+    .topbar-inner .searchbox{order:3;flex-basis:100%;max-width:none;}
+    .navlinks{gap:12px;font-size:12px;margin-left:auto;}
+    .navlinks .hide-sm{display:none;}
+    .hero{height:auto;padding:40px 0;}
+    .hero-content h1{font-size:28px;}
+    .hero-search{flex-direction:column;}
+    .hero-search button{padding:12px;}
+    .wrap,.page-pad{padding-left:16px;padding-right:16px;}
+    .gallery{grid-template-columns:1fr;}
+    .gallery .main{height:240px;}
+    .gallery .thumbs{flex-direction:row;}
+    .gallery .thumbs .th{height:64px;}
+    .booking-card,.filters{position:static;}
+    .detail-hero{height:240px;}
+  }
+  @media(max-width:560px){
+    .cats{grid-template-columns:repeat(2,1fr);}
+    .navlinks .btn{padding:7px 13px;}
+  }
+
+  /* ===== Interactive calendar ===== */
+  .cal{user-select:none;border:1px solid var(--line);border-radius:12px;padding:12px;}
+  .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .cal-head button{width:30px;height:30px;border-radius:8px;background:#F3F4F6;font-weight:700;color:var(--ruby);font-size:15px;}
+  .cal-head button:hover{background:#FEF2F2;}
+  .cal-head .m{font-weight:700;font-size:14px;color:var(--ink);}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+  .cal-grid .wd{text-align:center;font-size:10.5px;color:var(--muted);font-weight:700;padding:4px 0;}
+  .cal-day{text-align:center;font-size:13px;padding:8px 0;border-radius:8px;cursor:pointer;color:#374151;transition:.1s;}
+  .cal-day:hover{background:#FEF2F2;}
+  .cal-day.muted{color:#D1D5DB;cursor:default;}
+  .cal-day.muted:hover{background:none;}
+  .cal-day.empty{cursor:default;}
+  .cal-day.empty:hover{background:none;}
+  .cal-day.range{background:#FCE7E7;color:var(--ruby);border-radius:0;}
+  .cal-day.in{background:var(--ruby);color:#fff;font-weight:700;border-radius:8px 0 0 8px;}
+  .cal-day.out{background:var(--ruby);color:#fff;font-weight:700;border-radius:0 8px 8px 0;}
+  .cal-day.in.out{border-radius:8px;}
+  .cal-info{text-align:center;font-size:12.5px;color:var(--muted);margin:10px 0;}
+  .cal-info b{color:var(--ruby);}
+
+  /* ===== Reviews ===== */
+  .rev-summary{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:center;background:#FFF9F9;border:1px solid #F3D2D3;border-radius:14px;padding:18px;margin-bottom:18px;}
+  @media(max-width:520px){.rev-summary{grid-template-columns:1fr;}}
+  .rev-score{text-align:center;}
+  .rev-score .big{font-size:42px;font-weight:800;color:var(--ruby);font-family:'Poppins';line-height:1;}
+  .rev-score .st{color:var(--gold);font-size:14px;margin:4px 0;}
+  .rev-score .ct{font-size:11.5px;color:var(--muted);}
+  .rev-bars{display:flex;flex-direction:column;gap:8px;}
+  .rev-bar{display:grid;grid-template-columns:88px 1fr 30px;gap:9px;align-items:center;font-size:12.5px;color:#4B5563;}
+  .rev-bar .track{height:7px;background:#F3D2D3;border-radius:4px;overflow:hidden;}
+  .rev-bar .fill{height:100%;background:var(--ruby);border-radius:4px;}
+  .rev-bar .vv{text-align:right;font-weight:700;color:var(--ruby);}
+  .review{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+  .review .rh{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
+  .review .rav{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#B68A2E);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;}
+  .review .rn{font-weight:700;font-size:13.5px;color:var(--ink);}
+  .review .rd{font-size:11.5px;color:var(--muted);}
+  .review .rstars{color:var(--gold);font-size:12.5px;margin-left:auto;}
+  .review p{font-size:13px;color:#4B5563;line-height:1.6;margin:0;}
+
+  /* ===== Confirmation / E-ticket ===== */
+  .confirm-wrap{max-width:560px;margin:0 auto;padding:46px 20px 60px;text-align:center;}
+  .check-circle{width:88px;height:88px;border-radius:50%;background:#DCFCE7;color:#16A34A;font-size:48px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;animation:pop .45s ease;}
+  @keyframes pop{0%{transform:scale(.3);opacity:0;}60%{transform:scale(1.12);}100%{transform:scale(1);opacity:1;}}
+  .ticket{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;text-align:left;box-shadow:0 14px 34px rgba(0,0,0,.1);margin:24px 0;}
+  .ticket .tt{background:linear-gradient(135deg,var(--ruby),var(--ruby-dark));color:#fff;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;}
+  .ticket .tt .code{font-family:monospace;font-size:17px;font-weight:700;letter-spacing:1.5px;}
+  .ticket .tt .lbl{font-size:10.5px;opacity:.85;letter-spacing:.5px;}
+  .ticket .tb{padding:18px 20px;}
+  .ticket .perf{display:flex;gap:12px;margin-bottom:14px;}
+  .ticket .perf .ti{width:74px;height:74px;border-radius:10px;background:#ddd center/cover;flex-shrink:0;}
+  .trow{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-top:1px dashed var(--line);}
+  .trow span{color:var(--muted);}
+  .trow b{color:var(--ink);font-weight:700;}
+
+  /* ===== Top loading bar ===== */
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--gold),var(--ruby));z-index:9999;opacity:0;transition:width .35s ease,opacity .35s ease;}
+
+  /* ===== Form validation ===== */
+  .field.err input,.field.err select,.field.err textarea{border-color:#DC2626 !important;box-shadow:0 0 0 3px rgba(220,38,38,.12) !important;}
+  .field .errmsg{display:none;color:#DC2626;font-size:11.5px;margin-top:5px;font-weight:600;}
+  .field.err .errmsg{display:block;}
+
+  /* ===== Micro animations ===== */
+  .btn{transition:.15s transform,.15s background,.15s box-shadow;}
+  .btn:active{transform:scale(.96);}
+  .pcard:active,.cat:active,.resrow:active{transform:scale(.99);}
+  .avatar{transition:.15s transform;}
+  .avatar:active{transform:scale(.92);}
+  .cal-day{transition:background .12s,color .12s;}
+
+  /* ===== Style guide ===== */
+  .sg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+  .sg-swatch{height:78px;border-radius:10px;display:flex;align-items:flex-end;padding:8px;color:#fff;font-size:11px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.1);}
+  .sg-swatch small{display:block;font-weight:500;opacity:.85;font-size:10px;}
+  .sg-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px;}
+  .sg-card h3{color:var(--ruby);font-size:17px;margin-bottom:14px;}
+
+  /* ===== Bottom navigation (mobile) ===== */
+  .botnav{display:none;position:fixed;left:0;right:0;bottom:0;z-index:80;background:#fff;border-top:1px solid var(--line);box-shadow:0 -2px 14px rgba(0,0,0,.08);}
+  .botnav .bn-inner{display:flex;max-width:560px;margin:0 auto;}
+  .botnav button{flex:1;padding:8px 0 7px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:600;color:var(--muted);}
+  .botnav button .bi{font-size:19px;line-height:1;}
+  .botnav button.active{color:var(--ruby);}
+  @media(max-width:760px){
+    body.show-botnav{padding-bottom:60px;}
+    body.show-botnav .botnav{display:block;}
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<!-- ============================== HOME ============================== -->
+<section id="screen-home" class="screen active">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" onclick="go('home')">
+        <img src="assets/img-03.jpg" alt="RubyRa">
+        
+      </a>
+      <div class="searchbox">
+        <span>🔍</span>
+        <input id="home-search" placeholder="Cari hotel, villa, kota..." onkeydown="if(event.key==='Enter')doSearch()">
+      </div>
+      <nav class="navlinks">
+        <a class="hide-sm" onclick="go('bookings')">My Bookings</a>
+        <a class="hide-sm" onclick="go('wishlist')">Wishlist</a>
+        <a class="hide-sm" onclick="go('help')">Help Center</a>
+        <a class="btn btn-ghost hide-sm" onclick="go('login')">LOGIN</a>
+        <a class="btn btn-primary hide-sm" onclick="go('signup')">SIGN UP</a>
+        <div class="avatar" onclick="go('profile')" title="Akun Saya">RM</div>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-content">
+      <h1>Temukan Tempat Menginap Sempurna</h1>
+      <p>Hotel, villa, resort &amp; homestay terbaik di seluruh Indonesia — harga ramah, pengalaman istimewa.</p>
+      <div class="hero-search">
+        <input id="hero-loc" placeholder="📍 Mau ke mana?">
+        <input type="date" id="hero-date">
+        <select id="hero-guest"><option>1 Tamu</option><option>2 Tamu</option><option>3 Tamu</option><option>4+ Tamu</option></select>
+        <button class="btn btn-primary" onclick="doSearch()">CARI</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="section-title"><h2>Jelajahi Kategori</h2></div>
+    <div class="cats" id="cats"></div>
+
+    <div class="home-cols">
+      <div>
+        <div class="section-title"><h2>Recommended Stays</h2><a onclick="go('results')">Lihat semua →</a></div>
+        <div class="pcards" id="home-cards"></div>
+      </div>
+      <div>
+        <div class="section-title"><h2>Special Deals</h2></div>
+        <div class="deals">
+          <div class="deal d1" onclick="filterByDeal('weekend')">
+            <h3>Weekend Getaway — 30% OFF</h3>
+            <p>Nikmati akhir pekanmu dengan diskon spesial. Berlaku Jumat–Minggu untuk hotel &amp; villa pilihan.</p>
+            <span class="dbtn">BOOK NOW →</span>
+          </div>
+          <div class="deal d2" onclick="filterByDeal('longstay')">
+            <h3>Long Stay — SAVE 25%</h3>
+            <p>Menginap lebih lama, hemat lebih banyak. Min. 5 malam untuk apartemen, hotel &amp; villa.</p>
+            <span class="dbtn">VIEW DISCOUNT →</span>
+          </div>
+          <div class="deal d3" onclick="filterByDeal('earlybird')">
+            <h3>Early Bird — 20% OFF</h3>
+            <p>Pesan 30 hari sebelum menginap dan dapatkan harga terbaik tanpa ribet.</p>
+            <span class="dbtn">BOOK NOW →</span>
+          </div>
+          <div class="deal d4" onclick="filterByDeal('family')">
+            <h3>Family Package — 25% OFF</h3>
+            <p>Liburan keluarga lebih hemat di hotel &amp; resort dengan sarapan dan kolam renang.</p>
+            <span class="dbtn">BOOK NOW →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <div>
+        <div class="foot-brand"><img src="assets/img-03.jpg"><span class="bn" style="color:#fff;font-family:Poppins;font-weight:800;font-size:20px;">RubyRa <small style="color:var(--gold-light);font-style:italic;">Stays</small></span></div>
+        <p>Platform booking penginapan tepercaya untuk perjalananmu di Indonesia. Aman, mudah, dan harga transparan.</p>
+      </div>
+      <div><h4>Quick Links</h4><a onclick="go('home')">Home</a><a onclick="go('results')">Cari Stay</a><a onclick="go('bookings')">My Bookings</a><a onclick="go('wishlist')">Wishlist</a></div>
+      <div><h4>Bantuan</h4><a onclick="go('help')">Help Center</a><a onclick="go('help')">FAQ</a><a onclick="go('style')">Design System</a></div>
+      <div><h4>Belum punya akun?</h4><p>Daftar sekarang dan nikmati promo eksklusif anggota.</p><a class="btn btn-gold" style="display:inline-block;margin-top:6px;color:#fff;" onclick="go('signup')">SIGN UP GRATIS</a></div>
+    </div>
+    <div class="foot-bottom">© 2026 RubyRa Stays. Semua hak dilindungi. · Prototype interaktif.</div>
+  </footer>
+</section>
+
+<!-- ============================== LOGIN ============================== -->
+<section id="screen-login" class="screen">
+  <div class="auth-wrap">
+    <a class="back-home" onclick="go('home')">← Kembali ke Beranda</a>
+    <div class="auth-card">
+      <div class="brand"><img src="assets/img-03.jpg"></div>
+      <h2>Selamat Datang Kembali</h2>
+      <p class="sub">Masuk untuk melanjutkan booking-mu</p>
+      <div class="field" id="lf-email"><label>Email</label><input type="email" placeholder="nama@email.com"><div class="errmsg">Masukkan email yang valid</div></div>
+      <div class="field" id="lf-pass"><label>Password</label><input type="password" placeholder="••••••••"><div class="errmsg">Password minimal 6 karakter</div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;margin-bottom:6px;">
+        <label style="display:flex;gap:6px;align-items:center;color:#4B5563;"><input type="checkbox" style="accent-color:var(--ruby);">Ingat saya</label>
+        <a style="color:var(--ruby);font-weight:600;" onclick="toast('Link reset password dikirim 📧')">Lupa password?</a>
+      </div>
+      <button class="btn btn-primary" onclick="doLogin()">MASUK</button>
+      <div class="divider">atau masuk dengan</div>
+      <div class="social">
+        <button onclick="toast('Login Google')">🇬 Google</button>
+        <button onclick="toast('Login Facebook')">📘 Facebook</button>
+      </div>
+      <p class="auth-alt">Belum punya akun? <a onclick="go('signup')">Daftar sekarang</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SIGNUP ============================== -->
+<section id="screen-signup" class="screen">
+  <div class="auth-wrap">
+    <a class="back-home" onclick="go('home')">← Kembali ke Beranda</a>
+    <div class="auth-card">
+      <div class="brand"><img src="assets/img-03.jpg"></div>
+      <h2>Buat Akun Baru</h2>
+      <p class="sub">Gabung dan nikmati promo eksklusif anggota</p>
+      <div class="field" id="sf-name"><label>Nama Lengkap</label><input placeholder="Nama kamu"><div class="errmsg">Nama wajib diisi</div></div>
+      <div class="field" id="sf-email"><label>Email</label><input type="email" placeholder="nama@email.com"><div class="errmsg">Masukkan email yang valid</div></div>
+      <div class="field" id="sf-phone"><label>No. Telepon</label><input placeholder="08xxxxxxxxxx"><div class="errmsg">Masukkan no. telepon (min. 10 digit)</div></div>
+      <div class="field" id="sf-pass"><label>Password</label><input type="password" placeholder="Min. 8 karakter"><div class="errmsg">Password minimal 8 karakter</div></div>
+      <label id="sf-terms" style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#4B5563;margin-bottom:6px;"><input type="checkbox" style="accent-color:var(--ruby);margin-top:2px;">Saya setuju dengan Syarat &amp; Ketentuan dan Kebijakan Privasi RubyRa.</label>
+      <button class="btn btn-primary" onclick="doSignup()">DAFTAR</button>
+      <p class="auth-alt">Sudah punya akun? <a onclick="go('login')">Masuk di sini</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== RESULTS ============================== -->
+<section id="screen-results" class="screen">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" onclick="go('home')"><img src="assets/img-03.jpg"></a>
+      <div class="searchbox"><span>🔍</span><input id="results-search" placeholder="Cari lagi..." onkeydown="if(event.key==='Enter')applyFilters()"></div>
+      <nav class="navlinks">
+        <a onclick="go('bookings')">My Bookings</a>
+        <a onclick="go('wishlist')">Wishlist</a>
+        <a class="btn btn-ghost" onclick="go('login')">LOGIN</a>
+      </nav>
+    </div>
+  </header>
+  <div class="page-pad">
+    <div class="crumb"><a onclick="go('home')">Home</a> › Hasil Pencarian</div>
+    <div class="results-layout">
+      <aside class="filters">
+        <h3>Filter <button onclick="resetFilters()">Reset</button></h3>
+        <div class="fgroup">
+          <div class="ft">Tipe Properti</div>
+          <label class="frow"><input type="checkbox" class="f-type" value="hotel" onchange="applyFilters()"> 🏨 Hotel</label>
+          <label class="frow"><input type="checkbox" class="f-type" value="guest" onchange="applyFilters()"> 🏡 Guest House</label>
+          <label class="frow"><input type="checkbox" class="f-type" value="villa" onchange="applyFilters()"> 🏖️ Villa</label>
+          <label class="frow"><input type="checkbox" class="f-type" value="apart" onchange="applyFilters()"> 🏢 Apartment</label>
+          <label class="frow"><input type="checkbox" class="f-type" value="resort" onchange="applyFilters()"> 🌴 Resort</label>
+          <label class="frow"><input type="checkbox" class="f-type" value="homestay" onchange="applyFilters()"> 🏘️ Homestay</label>
+        </div>
+        <div class="fgroup">
+          <div class="ft">Harga Maksimum / malam</div>
+          <input type="range" id="f-price" min="200000" max="1800000" step="50000" value="1800000" oninput="onPrice()">
+          <div style="margin-top:6px;">Sampai <span class="price-val" id="f-price-label">Rp 1.800.000</span></div>
+        </div>
+        <div class="fgroup">
+          <div class="ft">Rating Minimum</div>
+          <label class="frow"><input type="radio" name="f-rating" value="0" checked onchange="applyFilters()"> Semua</label>
+          <label class="frow"><input type="radio" name="f-rating" value="4.5" onchange="applyFilters()"> ⭐ 4.5+</label>
+          <label class="frow"><input type="radio" name="f-rating" value="4.7" onchange="applyFilters()"> ⭐ 4.7+</label>
+          <label class="frow"><input type="radio" name="f-rating" value="4.9" onchange="applyFilters()"> ⭐ 4.9+</label>
+        </div>
+        <div class="fgroup">
+          <div class="ft">Lokasi</div>
+          <label class="frow"><input type="checkbox" class="f-loc" value="jakarta" onchange="applyFilters()"> Jakarta</label>
+          <label class="frow"><input type="checkbox" class="f-loc" value="bali" onchange="applyFilters()"> Bali</label>
+          <label class="frow"><input type="checkbox" class="f-loc" value="bandung" onchange="applyFilters()"> Bandung</label>
+          <label class="frow"><input type="checkbox" class="f-loc" value="surabaya" onchange="applyFilters()"> Surabaya</label>
+          <label class="frow"><input type="checkbox" class="f-loc" value="lombok" onchange="applyFilters()"> Lombok</label>
+          <label class="frow"><input type="checkbox" class="f-loc" value="yogya" onchange="applyFilters()"> Yogyakarta</label>
+        </div>
+        <div class="fgroup">
+          <div class="ft">Fasilitas</div>
+          <label class="frow"><input type="checkbox" class="f-am" value="pool" onchange="applyFilters()"> 🏊 Kolam Renang</label>
+          <label class="frow"><input type="checkbox" class="f-am" value="wifi" onchange="applyFilters()"> 📶 Wi-Fi</label>
+          <label class="frow"><input type="checkbox" class="f-am" value="breakfast" onchange="applyFilters()"> 🍳 Sarapan</label>
+          <label class="frow"><input type="checkbox" class="f-am" value="parking" onchange="applyFilters()"> 🅿️ Parkir</label>
+          <label class="frow"><input type="checkbox" class="f-am" value="spa" onchange="applyFilters()"> 💆 Spa</label>
+        </div>
+      </aside>
+      <div>
+        <div class="results-head">
+          <div class="cnt"><b id="res-count">10</b> properti ditemukan</div>
+          <div class="chips">
+            <span>Urutkan:</span>
+            <button class="chip active" onclick="setSort(this,'recommended')">Rekomendasi</button>
+            <button class="chip" onclick="setSort(this,'cheap')">Termurah</button>
+            <button class="chip" onclick="setSort(this,'rating')">Rating</button>
+            <button class="chip" onclick="setSort(this,'distance')">Terdekat</button>
+          </div>
+        </div>
+        <div class="activetags" id="active-tags"></div>
+        <div class="reslist" id="reslist"></div>
+        <div class="empty" id="res-empty" style="display:none;">
+          <div class="big">🔍</div>
+          <h3 style="color:var(--ink);margin-bottom:6px;">Tidak ada properti yang cocok</h3>
+          <p>Coba longgarkan filter atau pilih kategori lain.</p>
+          <button class="btn btn-primary" style="margin-top:14px;" onclick="resetFilters()">Reset Filter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== DETAIL ============================== -->
+<section id="screen-detail" class="screen">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" onclick="go('home')"><img src="assets/img-03.jpg"></a>
+      <div style="flex:1;"></div>
+      <nav class="navlinks">
+        <a onclick="go('results')">← Hasil</a>
+        <a onclick="go('bookings')">My Bookings</a>
+        <a class="btn btn-ghost" onclick="go('login')">LOGIN</a>
+      </nav>
+    </div>
+  </header>
+  <div class="page-pad">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <a class="crumb" style="margin:0;" onclick="go('results')">← Kembali ke hasil</a>
+      <button class="btn btn-ghost" id="detail-heart-btn" onclick="toggleWishCurrent()" style="padding:8px 16px;">🤍 Simpan</button>
+    </div>
+    <div class="gallery" style="margin-bottom:26px;">
+      <div class="main" id="gallery-main"><span class="gtag" id="gallery-tag">Tampilan Utama</span></div>
+      <div class="thumbs" id="gallery-thumbs"></div>
+    </div>
+    <div class="detail-grid">
+      <div>
+        <div class="dt-head">
+          <span class="type" id="d-type" style="color:var(--gold);font-weight:700;font-size:12px;text-transform:uppercase;"></span>
+          <h1 id="d-name"></h1>
+          <div class="dmeta" id="d-meta"></div>
+        </div>
+        <div class="amgrid" id="d-amen"></div>
+        <div class="dt-sec"><h3>Tentang Properti</h3><p id="d-desc"></p></div>
+        <div class="dt-sec">
+          <h3>Pilihan Kamar</h3>
+          <div class="roomrow" id="roomrow1" onclick="selectRoom(1)"><div><div class="rname">Deluxe Room</div><div class="rdesc">2 dewasa · 1 kasur queen · 28m²</div></div><div style="text-align:right;"><div style="font-weight:800;color:var(--ruby);" id="room1"></div><div class="rdesc">/malam</div></div></div>
+          <div class="roomrow" id="roomrow2" onclick="selectRoom(2)"><div><div class="rname">Executive Suite</div><div class="rdesc">3 dewasa · 1 kasur king · 45m²</div></div><div style="text-align:right;"><div style="font-weight:800;color:var(--ruby);" id="room2"></div><div class="rdesc">/malam</div></div></div>
+        </div>
+        <div class="dt-sec">
+          <h3>Lokasi</h3>
+          <iframe id="d-map" title="Peta lokasi" style="width:100%;height:230px;border:1px solid var(--line);border-radius:12px;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <div style="font-size:12.5px;color:var(--muted);margin-top:7px;">📍 Lokasi di <span id="d-loc2" style="font-weight:700;color:var(--ink);"></span></div>
+        </div>
+        <div class="dt-sec">
+          <h3>Ulasan Tamu</h3>
+          <div class="rev-summary">
+            <div class="rev-score">
+              <div class="big" id="rev-big">4.7</div>
+              <div class="st" id="rev-stars">★★★★★</div>
+              <div class="ct" id="rev-count">284 ulasan</div>
+            </div>
+            <div class="rev-bars" id="rev-bars"></div>
+          </div>
+          <div id="rev-list"></div>
+          <button class="btn btn-ghost" id="btn-all-rev" style="width:100%;margin-top:6px;" onclick="toggleAllReviews()">Lihat semua ulasan →</button>
+        </div>
+      </div>
+      <div>
+        <div class="booking-card">
+          <div class="old" id="d-old"></div>
+          <div class="bp" id="d-price"></div>
+          <div style="margin:14px 0;border-top:1px solid var(--line);"></div>
+          <label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:8px;color:#374151;">Pilih Tanggal Menginap</label>
+          <div class="cal" id="cal"></div>
+          <div class="cal-info" id="cal-info">Klik tanggal check-in</div>
+          <input type="hidden" id="bk-in"><input type="hidden" id="bk-out">
+          <div class="field"><label>Tamu</label><select id="bk-guest"><option>1 Tamu</option><option selected>2 Tamu</option><option>3 Tamu</option><option>4 Tamu</option></select></div>
+          <button class="btn btn-primary" style="width:100%;padding:13px;font-size:15px;margin-top:6px;" onclick="startBooking()">BOOK NOW</button>
+          <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:10px;">Belum ada biaya yang dikenakan</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== BOOKING ============================== -->
+<section id="screen-booking" class="screen">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" onclick="go('home')"><img src="assets/img-03.jpg"></a>
+      <div style="flex:1;"></div>
+      <nav class="navlinks"><a onclick="go('detail')">← Kembali</a></nav>
+    </div>
+  </header>
+  <div class="page-pad" style="max-width:920px;">
+    <div class="crumb"><a onclick="go('home')">Home</a> › <a onclick="go('detail')">Detail</a> › Data Pemesan</div>
+    <h1 style="color:var(--ruby);font-size:24px;margin-bottom:18px;">Lengkapi Data Pemesanan</h1>
+    <div class="two-col">
+      <div class="panel">
+        <h3 style="color:var(--ink);font-size:16px;margin-bottom:14px;">Data Tamu</h3>
+        <div class="grid2">
+          <div class="field" id="bf-fname"><label>Nama Depan</label><input placeholder="Nama depan"><div class="errmsg">Wajib diisi</div></div>
+          <div class="field" id="bf-lname"><label>Nama Belakang</label><input placeholder="Nama belakang"><div class="errmsg">Wajib diisi</div></div>
+        </div>
+        <div class="grid2">
+          <div class="field" id="bf-email"><label>Email</label><input type="email" placeholder="nama@email.com"><div class="errmsg">Masukkan email yang valid</div></div>
+          <div class="field" id="bf-phone"><label>No. Telepon</label><input placeholder="08xxxxxxxxxx"><div class="errmsg">Masukkan no. telepon</div></div>
+        </div>
+        <div class="field"><label>Permintaan Khusus (opsional)</label><textarea rows="3" style="width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-size:14px;outline:none;" placeholder="Contoh: kamar lantai atas, late check-in..."></textarea></div>
+        <h3 style="color:var(--ink);font-size:16px;margin:18px 0 14px;">Untuk siapa pemesanan ini?</h3>
+        <label class="frow" style="margin-bottom:10px;"><input type="radio" name="forwho" checked style="accent-color:var(--ruby);"> Saya sendiri</label>
+        <label class="frow"><input type="radio" name="forwho" style="accent-color:var(--ruby);"> Orang lain</label>
+      </div>
+      <div>
+        <div class="summary">
+          <h3>Ringkasan Pesanan</h3>
+          <div style="display:flex;gap:10px;margin-bottom:14px;">
+            <div id="bk-img" style="width:64px;height:64px;border-radius:10px;background:#ddd center/cover;"></div>
+            <div><div style="font-weight:700;font-size:14px;" id="bk-name"></div><div style="font-size:12px;color:var(--muted);" id="bk-loc"></div></div>
+          </div>
+          <div class="sline"><span>Check-in</span><span id="sum-in">—</span></div>
+          <div class="sline"><span>Check-out</span><span id="sum-out">—</span></div>
+          <div class="sline"><span id="sum-nights">Harga × 2 malam</span><span id="sum-sub">—</span></div>
+          <div class="sline"><span>Pajak &amp; layanan (11%)</span><span id="sum-tax">—</span></div>
+          <div class="sline total"><span>Total</span><span id="sum-total">—</span></div>
+          <button class="btn btn-primary" style="width:100%;padding:13px;font-size:15px;margin-top:14px;" onclick="submitBooking()">LANJUT KE PEMBAYARAN</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== PAYMENT ============================== -->
+<section id="screen-payment" class="screen">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" onclick="go('home')"><img src="assets/img-03.jpg"></a>
+      <div style="flex:1;"></div>
+      <nav class="navlinks"><a onclick="go('booking')">← Kembali</a></nav>
+    </div>
+  </header>
+  <div class="page-pad" style="max-width:920px;">
+    <div class="crumb"><a onclick="go('home')">Home</a> › <a onclick="go('booking')">Data Pemesan</a> › Pembayaran</div>
+    <h1 style="color:var(--ruby);font-size:24px;margin-bottom:18px;">Metode Pembayaran</h1>
+    <div class="two-col">
+      <div class="panel">
+        <div class="pays">
+          <div class="pay sel" onclick="selPay(this)"><div class="ico">💳</div><div><div class="pl">Kartu Kredit / Debit</div><div class="pd">Visa, Mastercard, JCB</div></div><div class="radio"></div></div>
+          <div class="pay" onclick="selPay(this)"><div class="ico">🏦</div><div><div class="pl">Transfer Bank (VA)</div><div class="pd">BCA, Mandiri, BNI, BRI</div></div><div class="radio"></div></div>
+          <div class="pay" onclick="selPay(this)"><div class="ico">📱</div><div><div class="pl">E-Wallet</div><div class="pd">GoPay, OVO, DANA, ShopeePay</div></div><div class="radio"></div></div>
+          <div class="pay" onclick="selPay(this)"><div class="ico">🏪</div><div><div class="pl">Gerai Retail</div><div class="pd">Alfamart, Indomaret</div></div><div class="radio"></div></div>
+        </div>
+        <div id="card-form">
+          <h3 style="color:var(--ink);font-size:15px;margin:6px 0 12px;">Detail Kartu</h3>
+          <div class="field"><label>Nomor Kartu</label><input placeholder="1234 5678 9012 3456"></div>
+          <div class="grid2">
+            <div class="field"><label>Masa Berlaku</label><input placeholder="MM/YY"></div>
+            <div class="field"><label>CVV</label><input placeholder="123"></div>
+          </div>
+          <div class="field"><label>Nama di Kartu</label><input placeholder="NAMA LENGKAP"></div>
+        </div>
+      </div>
+      <div>
+        <div class="summary">
+          <h3>Ringkasan</h3>
+          <div style="display:flex;gap:10px;margin-bottom:14px;">
+            <div id="pay-img" style="width:64px;height:64px;border-radius:10px;background:#ddd center/cover;"></div>
+            <div><div style="font-weight:700;font-size:14px;" id="pay-name"></div><div style="font-size:12px;color:var(--muted);" id="pay-loc"></div></div>
+          </div>
+          <div class="sline"><span id="pay-nights">2 malam</span><span id="pay-sub">—</span></div>
+          <div class="sline"><span>Pajak &amp; layanan</span><span id="pay-tax">—</span></div>
+          <div class="sline total"><span>Total</span><span id="pay-total">—</span></div>
+          <button class="btn btn-primary" style="width:100%;padding:14px;font-size:15px;margin-top:14px;" onclick="payNow()">BAYAR SEKARANG</button>
+          <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:10px;">🔒 Pembayaran aman &amp; terenkripsi</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== MY BOOKINGS ============================== -->
+<section id="screen-bookings" class="screen">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" onclick="go('home')"><img src="assets/img-03.jpg"></a>
+      <div style="flex:1;"></div>
+      <nav class="navlinks"><a onclick="go('home')">← Home</a><a onclick="go('wishlist')">Wishlist</a><a onclick="go('help')">Help</a></nav>
+    </div>
+  </header>
+  <div class="page-pad" style="max-width:920px;">
+    <h1 style="color:var(--ruby);font-size:24px;margin-bottom:6px;">My Bookings</h1>
+    <p style="color:var(--muted);margin-bottom:20px;">Pesanan dan riwayat menginapmu.</p>
+    <div id="bookings-list"></div>
+  </div>
+</section>
+
+<!-- ============================== WISHLIST ============================== -->
+<section id="screen-wishlist" class="screen">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" onclick="go('home')"><img src="assets/img-03.jpg"></a>
+      <div style="flex:1;"></div>
+      <nav class="navlinks"><a onclick="go('home')">← Home</a><a onclick="go('bookings')">My Bookings</a><a onclick="go('help')">Help</a></nav>
+    </div>
+  </header>
+  <div class="page-pad">
+    <h1 style="color:var(--ruby);font-size:24px;margin-bottom:6px;">Wishlist ❤️</h1>
+    <p style="color:var(--muted);margin-bottom:20px;">Properti yang kamu simpan untuk nanti.</p>
+    <div class="pcards" id="wishlist-cards"></div>
+    <div class="empty" id="wishlist-empty">
+      <div class="big">🤍</div>
+      <h3 style="color:var(--ink);margin-bottom:6px;">Wishlist masih kosong</h3>
+      <p>Tekan ikon hati ❤️ pada properti untuk menyimpannya di sini.</p>
+      <button class="btn btn-primary" style="margin-top:14px;" onclick="go('home')">Jelajahi Stay</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== HELP CENTER ============================== -->
+<section id="screen-help" class="screen">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" onclick="go('home')"><img src="assets/img-03.jpg"></a>
+      <div style="flex:1;"></div>
+      <nav class="navlinks"><a onclick="go('home')">← Home</a><a onclick="go('bookings')">My Bookings</a></nav>
+    </div>
+  </header>
+  <div class="page-pad" style="max-width:760px;">
+    <h1 style="color:var(--ruby);font-size:26px;margin-bottom:6px;text-align:center;">Pusat Bantuan</h1>
+    <p style="color:var(--muted);margin-bottom:24px;text-align:center;">Ada yang bisa kami bantu?</p>
+    <div class="faq open"><q onclick="toggleFaq(this)">Bagaimana cara memesan kamar? <span class="arr">▾</span></q><div class="a">Pilih properti, tentukan tanggal & jumlah tamu, klik <b>BOOK NOW</b>, isi data pemesan, lalu pilih metode pembayaran. Konfirmasi akan muncul di <b>My Bookings</b>.</div></div>
+    <div class="faq"><q onclick="toggleFaq(this)">Apakah bisa membatalkan pesanan? <span class="arr">▾</span></q><div class="a">Ya. Pembatalan gratis tersedia untuk sebagian besar properti hingga 24 jam sebelum check-in. Kebijakan tiap properti dapat berbeda.</div></div>
+    <div class="faq"><q onclick="toggleFaq(this)">Metode pembayaran apa saja yang didukung? <span class="arr">▾</span></q><div class="a">Kartu kredit/debit, transfer bank (Virtual Account), e-wallet (GoPay, OVO, DANA, ShopeePay), dan gerai retail (Alfamart/Indomaret).</div></div>
+    <div class="faq"><q onclick="toggleFaq(this)">Bagaimana cara menggunakan promo? <span class="arr">▾</span></q><div class="a">Buka bagian <b>Special Deals</b> di beranda dan klik promo yang diinginkan. Filter akan otomatis diterapkan ke properti yang memenuhi syarat.</div></div>
+    <div class="faq"><q onclick="toggleFaq(this)">Apakah harga sudah termasuk pajak? <span class="arr">▾</span></q><div class="a">Harga yang ditampilkan adalah harga per malam. Pajak & biaya layanan (11%) ditambahkan dan dirinci pada halaman ringkasan sebelum pembayaran.</div></div>
+    <div class="panel" style="margin-top:24px;text-align:center;">
+      <h3 style="color:var(--ruby);margin-bottom:8px;">Masih butuh bantuan?</h3>
+      <p style="color:#4B5563;font-size:14px;margin-bottom:14px;">Tim kami siap 24/7 untuk membantumu.</p>
+      <button class="btn btn-primary" onclick="toast('Live chat dibuka 💬')" style="margin-right:8px;">💬 Live Chat</button>
+      <button class="btn btn-ghost" onclick="toast('Email: support@rubyra.id 📧')">📧 Email Kami</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== CONFIRMATION / E-TICKET ============================== -->
+<section id="screen-confirm" class="screen">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" onclick="go('home')"><img src="assets/img-03.jpg"></a>
+      <div style="flex:1;"></div>
+      <nav class="navlinks"><a onclick="go('home')">Home</a><div class="avatar" onclick="go('profile')" title="Akun Saya">RM</div></nav>
+    </div>
+  </header>
+  <div class="confirm-wrap">
+    <div class="check-circle">✓</div>
+    <h1 style="color:var(--ink);font-size:26px;margin-bottom:6px;">Pembayaran Berhasil!</h1>
+    <p style="color:var(--muted);">Pesananmu sudah dikonfirmasi. E-ticket telah dikirim ke email kamu.</p>
+    <div class="ticket">
+      <div class="tt">
+        <div><div class="lbl">KODE BOOKING</div><div class="code" id="cf-code">RR-0000</div></div>
+        <img src="assets/img-03.jpg" style="width:44px;height:44px;">
+      </div>
+      <div class="tb">
+        <div class="perf">
+          <div class="ti" id="cf-img"></div>
+          <div>
+            <div style="font-weight:700;font-size:15px;" id="cf-name"></div>
+            <div style="font-size:12px;color:var(--muted);" id="cf-loc"></div>
+            <div style="color:var(--gold);font-size:12.5px;" id="cf-stars"></div>
+          </div>
+        </div>
+        <div class="trow"><span>Check-in</span><b id="cf-in"></b></div>
+        <div class="trow"><span>Check-out</span><b id="cf-out"></b></div>
+        <div class="trow"><span>Tamu</span><b id="cf-guest"></b></div>
+        <div class="trow"><span>Metode Pembayaran</span><b id="cf-method"></b></div>
+        <div class="trow"><span>Total Dibayar</span><b style="color:var(--ruby);font-size:15px;" id="cf-total"></b></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="go('bookings')">Lihat My Bookings</button>
+      <button class="btn btn-ghost" onclick="toast('E-ticket diunduh 📄')">Download E-Ticket</button>
+      <button class="btn btn-ghost" onclick="go('home')">Kembali ke Home</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== PROFILE / ACCOUNT ============================== -->
+<section id="screen-profile" class="screen">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" onclick="go('home')"><img src="assets/img-03.jpg"></a>
+      <div style="flex:1;"></div>
+      <nav class="navlinks">
+        <a class="hide-sm" onclick="go('home')">← Home</a>
+        <a class="hide-sm" onclick="go('bookings')">My Bookings</a>
+        <a class="hide-sm" onclick="go('wishlist')">Wishlist</a>
+        <div class="avatar" title="Akun Saya">RM</div>
+      </nav>
+    </div>
+  </header>
+  <div class="page-pad" style="max-width:980px;">
+    <div class="profile-head">
+      <div class="pa">RM</div>
+      <div>
+        <h2>Ray Mclung</h2>
+        <div class="pe">📧 tespuzzle@gmail.com · 📱 0812-3456-7890</div>
+      </div>
+      <div class="pstats">
+        <div><b id="ps-trips">2</b><span>Pesanan</span></div>
+        <div><b id="ps-wish">0</b><span>Wishlist</span></div>
+        <div><b>Gold</b><span>Member</span></div>
+      </div>
+    </div>
+    <div class="acct-grid">
+      <div class="acct-menu">
+        <button class="active" onclick="acctTab(this,'info')">👤 Profil Saya</button>
+        <button onclick="acctTab(this,'trips')">📋 Pesanan Saya</button>
+        <button onclick="go('wishlist')">❤️ Wishlist</button>
+        <button onclick="acctTab(this,'pay')">💳 Metode Pembayaran</button>
+        <button onclick="acctTab(this,'settings')">⚙️ Pengaturan</button>
+        <button onclick="isLoggedIn=false;updateAuthUI();toast('Berhasil keluar 👋');go('home')">🚪 Keluar</button>
+      </div>
+      <div>
+        <!-- Info tab -->
+        <div class="panel acct-pane" id="pane-info">
+          <h3 style="color:var(--ruby);font-size:17px;margin-bottom:16px;">Informasi Pribadi</h3>
+          <div class="grid2">
+            <div class="field"><label>Nama Depan</label><input value="Ray"></div>
+            <div class="field"><label>Nama Belakang</label><input value="Mclung"></div>
+          </div>
+          <div class="grid2">
+            <div class="field"><label>Email</label><input type="email" value="tespuzzle@gmail.com"></div>
+            <div class="field"><label>No. Telepon</label><input value="0812-3456-7890"></div>
+          </div>
+          <div class="grid2">
+            <div class="field"><label>Tanggal Lahir</label><input type="date" value="1998-05-20"></div>
+            <div class="field"><label>Kota</label><input value="Jakarta"></div>
+          </div>
+          <button class="btn btn-primary" onclick="toast('Profil tersimpan ✓')">Simpan Perubahan</button>
+        </div>
+        <!-- Trips tab -->
+        <div class="panel acct-pane" id="pane-trips" style="display:none;">
+          <h3 style="color:var(--ruby);font-size:17px;margin-bottom:16px;">Pesanan Saya</h3>
+          <div id="profile-bookings"></div>
+        </div>
+        <!-- Payment tab -->
+        <div class="panel acct-pane" id="pane-pay" style="display:none;">
+          <h3 style="color:var(--ruby);font-size:17px;margin-bottom:16px;">Metode Pembayaran Tersimpan</h3>
+          <div class="roomrow"><div><div class="rname">💳 Visa •••• 4242</div><div class="rdesc">Berlaku 08/27 · Utama</div></div><button class="btn btn-ghost" style="padding:7px 14px;font-size:12px;" onclick="toast('Hapus kartu')">Hapus</button></div>
+          <div class="roomrow"><div><div class="rname">📱 GoPay</div><div class="rdesc">0812-3456-7890</div></div><button class="btn btn-ghost" style="padding:7px 14px;font-size:12px;" onclick="toast('Hapus e-wallet')">Hapus</button></div>
+          <button class="btn btn-primary" style="margin-top:6px;" onclick="toast('Tambah metode +')">+ Tambah Metode</button>
+        </div>
+        <!-- Settings tab -->
+        <div class="panel acct-pane" id="pane-settings" style="display:none;">
+          <h3 style="color:var(--ruby);font-size:17px;margin-bottom:16px;">Pengaturan</h3>
+          <label class="frow" style="justify-content:space-between;margin-bottom:14px;"><span>📧 Notifikasi email promo</span><input type="checkbox" checked style="accent-color:var(--ruby);width:18px;height:18px;"></label>
+          <label class="frow" style="justify-content:space-between;margin-bottom:14px;"><span>📱 Notifikasi SMS</span><input type="checkbox" style="accent-color:var(--ruby);width:18px;height:18px;"></label>
+          <label class="frow" style="justify-content:space-between;margin-bottom:14px;"><span>🌙 Mode gelap</span><input type="checkbox" style="accent-color:var(--ruby);width:18px;height:18px;"></label>
+          <label class="frow" style="justify-content:space-between;margin-bottom:18px;"><span>🇮🇩 Bahasa Indonesia</span><select style="border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;"><option>Indonesia</option><option>English</option></select></label>
+          <button class="btn btn-ghost" onclick="toast('Password diubah')">Ubah Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== STYLE GUIDE / DESIGN SYSTEM ============================== -->
+<section id="screen-style" class="screen">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" onclick="go('home')"><img src="assets/img-03.jpg"></a>
+      <div style="flex:1;"></div>
+      <nav class="navlinks"><a onclick="go('home')">← Home</a></nav>
+    </div>
+  </header>
+  <div class="page-pad" style="max-width:980px;">
+    <h1 style="color:var(--ruby);font-size:28px;margin-bottom:4px;">Design System</h1>
+    <p style="color:var(--muted);margin-bottom:24px;">Panduan visual & komponen UI RubyRa Stays.</p>
+
+    <div class="sg-card">
+      <h3>Brand & Logo</h3>
+      <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+        <img src="assets/img-03.jpg" style="width:90px;height:90px;">
+        <div>
+          <div style="font-family:'Poppins';font-weight:800;font-size:26px;color:var(--ruby);">RubyRa <span style="font-family:'Inria Serif';font-style:italic;color:var(--gold);">Stays</span></div>
+          <p style="color:var(--muted);font-size:13px;margin-top:4px;">Logo crest mahkota merah-emas — melambangkan kemewahan & kepercayaan.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sg-card">
+      <h3>Palet Warna</h3>
+      <div class="sg-grid">
+        <div class="sg-swatch" style="background:#800002;">Ruby<small>#800002</small></div>
+        <div class="sg-swatch" style="background:#5C0001;">Ruby Dark<small>#5C0001</small></div>
+        <div class="sg-swatch" style="background:#A3232A;">Ruby Light<small>#A3232A</small></div>
+        <div class="sg-swatch" style="background:#C8A24B;">Gold<small>#C8A24B</small></div>
+        <div class="sg-swatch" style="background:#E4CB82;color:#5C0001;">Gold Light<small>#E4CB82</small></div>
+        <div class="sg-swatch" style="background:#1F2937;">Ink<small>#1F2937</small></div>
+        <div class="sg-swatch" style="background:#6B7280;">Muted<small>#6B7280</small></div>
+        <div class="sg-swatch" style="background:#F5F5F5;color:#1F2937;border:1px solid #E5E7EB;">BG<small>#F5F5F5</small></div>
+      </div>
+    </div>
+
+    <div class="sg-card">
+      <h3>Tipografi</h3>
+      <div style="font-family:'Poppins';font-weight:800;font-size:34px;color:var(--ink);">Poppins — Heading</div>
+      <div style="font-family:'Inter';font-size:15px;color:#4B5563;margin-top:8px;line-height:1.7;">Inter — Body text. Digunakan untuk paragraf, label, dan elemen antarmuka. Mudah dibaca pada berbagai ukuran layar.</div>
+      <div style="font-family:'Inria Serif';font-style:italic;font-size:20px;color:var(--gold);margin-top:8px;">Inria Serif — Aksen (italic untuk tagline "Stays")</div>
+    </div>
+
+    <div class="sg-card">
+      <h3>Tombol</h3>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn btn-ghost">Ghost / Outline</button>
+        <button class="btn btn-gold" style="color:#fff;">Gold</button>
+      </div>
+    </div>
+
+    <div class="sg-card">
+      <h3>Badge & Status</h3>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <span class="status confirmed">✓ Dikonfirmasi</span>
+        <span class="status upcoming">⏳ Akan datang</span>
+        <span class="status done">✓ Selesai</span>
+        <span style="background:var(--ruby);color:#fff;font-size:11px;font-weight:700;padding:4px 9px;border-radius:8px;">-30%</span>
+      </div>
+    </div>
+
+    <div class="sg-card">
+      <h3>Kartu Properti</h3>
+      <div class="pcards" id="sg-card-demo" style="grid-template-columns:repeat(2,1fr);"></div>
+    </div>
+  </div>
+</section>
+
+<div id="toast"></div>
+
+<!-- Bottom navigation (mobile) -->
+<nav class="botnav">
+  <div class="bn-inner">
+    <button data-nav="home" onclick="go('home')"><span class="bi">🏠</span>Home</button>
+    <button data-nav="results" onclick="go('results')"><span class="bi">🔍</span>Cari</button>
+    <button data-nav="wishlist" onclick="go('wishlist')"><span class="bi">❤️</span>Wishlist</button>
+    <button data-nav="bookings" onclick="go('bookings')"><span class="bi">📋</span>Pesanan</button>
+    <button data-nav="profile" onclick="go('profile')"><span class="bi">👤</span>Akun</button>
+  </div>
+</nav>
+
+<script>
+const IMGMAP={"v128_209": "assets/img-04.jpg", "v128_216": "assets/img-05.jpg", "v3_44": "assets/img-06.jpg", "v3_94": "assets/img-07.jpg", "v3_53": "assets/img-08.jpg", "v3_40": "assets/img-09.jpg", "v128_226": "assets/img-10.jpg", "v3_73": "assets/img-11.jpg", "v78_6": "assets/img-03.jpg", "v3_31": "assets/img-12.jpg", "v128_251": "assets/img-13.jpg", "v3_105": "assets/img-14.jpg", "v128_237": "assets/img-15.jpg", "v46_196": "assets/img-02.jpg", "v3_49": "assets/img-16.jpg", "v123_72": "assets/img-17.jpg", "v3_34": "assets/img-18.jpg", "v3_119": "assets/img-19.jpg"};
+function IMG(n){return IMGMAP[n]||'';}
+
+/* ====================== DATA ====================== */
+const TYPE_LABEL={hotel:'Hotel',guest:'Guest House',villa:'Villa',apart:'Apartment',resort:'Resort',homestay:'Homestay'};
+const LOC_LABEL={jakarta:'Jakarta',surabaya:'Surabaya',bali:'Bali',bandung:'Bandung',lombok:'Lombok',yogya:'Yogyakarta'};
+const AM={pool:'🏊 Kolam Renang',wifi:'📶 Wi-Fi',breakfast:'🍳 Sarapan',parking:'🅿️ Parkir',spa:'💆 Spa',ac:'❄️ AC',gym:'🏋️ Gym',restaurant:'🍽️ Restoran'};
+
+const PROPS=[
+ {id:1,name:'Uhu Melati Hotel',type:'hotel',loc:'jakarta',img:'v3_73',price:850000,old:1100000,rating:4.7,reviews:284,dist:1.2,star:4,amen:['wifi','pool','breakfast','parking'],desc:'Hotel modern di jantung Jakarta dengan rooftop pool, restoran, dan akses mudah ke pusat bisnis serta kawasan kuliner. Cocok untuk perjalanan bisnis maupun liburan kota.'},
+ {id:2,name:'Bukaro Jinta',type:'guest',loc:'surabaya',img:'v3_94',price:320000,old:420000,rating:4.5,reviews:156,dist:2.1,star:3,amen:['wifi','breakfast','ac'],desc:'Guest house nyaman bergaya tropis dengan kamar bersih dan suasana tenang. Pilihan tepat untuk perjalanan santai dan hemat di Surabaya.'},
+ {id:3,name:'El Dantó Royale',type:'hotel',loc:'bali',img:'v3_105',price:1450000,old:1900000,rating:4.9,reviews:412,dist:2.4,star:5,amen:['wifi','pool','breakfast','spa','gym','restaurant'],desc:'Hotel mewah tepi pantai dengan layanan bintang lima, kolam besar, spa, dan pemandangan laut yang memukau. Pengalaman menginap kelas dunia.'},
+ {id:4,name:'Echo Handap',type:'villa',loc:'bandung',img:'v3_119',price:980000,old:1250000,rating:4.8,reviews:198,dist:3.5,star:4,amen:['wifi','pool','breakfast','parking'],desc:'Villa privat dengan kolam renang, taman luas, dan udara sejuk dataran tinggi Bandung. Ideal untuk liburan keluarga atau gathering kecil.'},
+ {id:5,name:'Aethelgard Residence',type:'apart',loc:'jakarta',img:'v123_72',price:650000,old:800000,rating:4.6,reviews:173,dist:1.8,star:4,amen:['wifi','ac','gym','parking'],desc:'Apartemen modern full-furnished dengan dapur lengkap, gym, dan lokasi strategis dekat pusat perbelanjaan. Nyaman untuk staycation maupun long stay.'},
+ {id:6,name:'Azurea Sands Resort',type:'resort',loc:'lombok',img:'v128_209',price:1280000,old:1650000,rating:4.8,reviews:326,dist:2.0,star:5,amen:['wifi','pool','breakfast','spa','restaurant'],desc:'Resort tepi pantai Lombok dengan kolam infinity, kabana, dan suasana tenang. Surga untuk relaksasi dan menikmati matahari terbenam.'},
+ {id:7,name:'Sora Living',type:'homestay',loc:'yogya',img:'v128_216',price:280000,old:360000,rating:4.4,reviews:142,dist:0.5,star:3,amen:['wifi','breakfast','ac'],desc:'Homestay hangat bergaya Jawa, dekat Malioboro dan kuliner legendaris. Pelayanan ramah dengan harga bersahabat untuk para petualang.'},
+ {id:8,name:'Sovereign Heritage',type:'hotel',loc:'jakarta',img:'v128_226',price:1650000,old:2100000,rating:4.9,reviews:389,dist:0.8,star:5,amen:['wifi','pool','breakfast','spa','gym','restaurant'],desc:'Hotel heritage megah dengan arsitektur klasik, ballroom, dan pelayanan istimewa. Menghadirkan kemewahan dan kenyamanan kelas atas di pusat kota.'},
+ {id:9,name:'Verdant Nest Villa',type:'villa',loc:'bali',img:'v128_237',price:1150000,old:1500000,rating:4.9,reviews:267,dist:3.2,star:5,amen:['wifi','pool','breakfast','spa'],desc:'Villa dengan infinity-pool menghadap laut, interior elegan, dan privasi penuh. Pilihan sempurna untuk bulan madu atau retreat romantis.'},
+ {id:10,name:'Verdant Nook',type:'apart',loc:'bandung',img:'v128_251',price:540000,old:700000,rating:4.5,reviews:119,dist:1.6,star:4,amen:['wifi','ac','gym','parking'],desc:'Apartemen cozy dengan city view, fasilitas lengkap, dan akses mudah ke kafe serta factory outlet. Ideal untuk staycation di Bandung.'}
+];
+
+const rp=n=>'Rp '+n.toLocaleString('id-ID');
+const wishlist=new Set();
+const bookings=[]; // {prop, in, out, nights, total, status}
+let current=null;
+let sortMode='recommended';
+
+/* ====================== NAV ====================== */
+function go(name){
+  showProgress();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const t=document.getElementById('screen-'+name);
+  if(t)t.classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+  // bottom nav visibility + active state
+  const hideBot=['login','signup','style'].includes(name);
+  document.body.classList.toggle('show-botnav',!hideBot);
+  document.querySelectorAll('.botnav button').forEach(b=>b.classList.toggle('active',b.dataset.nav===name));
+  if(name==='results')applyFilters();
+  if(name==='wishlist')renderWishlist();
+  if(name==='bookings')renderBookings();
+  if(name==='profile')renderProfile();
+  if(name==='style')renderSGDemo();
+}
+function showProgress(){
+  const p=document.getElementById('progress');
+  p.style.transition='none';p.style.width='0';p.style.opacity='1';
+  void p.offsetWidth;
+  p.style.transition='width .35s ease,opacity .35s ease';
+  p.style.width='80%';
+  clearTimeout(window._pg1);clearTimeout(window._pg2);
+  window._pg1=setTimeout(()=>{p.style.width='100%';},250);
+  window._pg2=setTimeout(()=>{p.style.opacity='0';p.style.width='0';},700);
+}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(()=>t.classList.remove('show'),1900);}
+function toggleFaq(q){q.parentElement.classList.toggle('open');}
+
+/* ====================== RENDER CARDS ====================== */
+function cardHTML(p){
+  const heart=wishlist.has(p.id)?'on':'';
+  const heartIcon=wishlist.has(p.id)?'❤️':'🤍';
+  const disc=p.old>p.price?`<span class="badge">-${Math.round((1-p.price/p.old)*100)}%</span>`:'';
+  return `<div class="pcard" onclick="openDetail(${p.id})">
+    <div class="ph" style="background-image:url('${IMG(p.img)}')">
+      ${disc}
+      <div class="heart ${heart}" onclick="event.stopPropagation();toggleWish(${p.id},this)">${heartIcon}</div>
+    </div>
+    <div class="pb">
+      <div class="pt"><div><div class="pn">${p.name}</div><div class="type">${TYPE_LABEL[p.type]}</div></div></div>
+      <div class="loc">📍 ${LOC_LABEL[p.loc]} · ${p.dist} km dari pusat</div>
+      <div class="rt">★ ${p.rating} <span style="color:var(--muted);font-weight:500;">(${p.reviews} ulasan)</span></div>
+      <div class="pr"><div>${p.old>p.price?`<div class="old">${rp(p.old)}</div>`:''}<div class="price">${rp(p.price)} <small>/malam</small></div></div></div>
+    </div>
+  </div>`;
+}
+function renderHome(){
+  document.getElementById('home-cards').innerHTML=PROPS.map(cardHTML).join('');
+  const cats=[['hotel','v3_31'],['guest','v3_34'],['villa','v3_40'],['apart','v3_44'],['resort','v3_49'],['homestay','v3_53']];
+  document.getElementById('cats').innerHTML=cats.map(([t,img])=>
+    `<div class="cat" onclick="filterByCategory('${t}')"><div class="ic" style="background-image:url('${IMG(img)}')"></div><span>${TYPE_LABEL[t].toUpperCase()}</span></div>`).join('');
+}
+
+/* ====================== WISHLIST ====================== */
+function toggleWish(id,el){
+  if(wishlist.has(id)){wishlist.delete(id);if(el){el.classList.remove('on');el.textContent='🤍';}toast('Dihapus dari wishlist');}
+  else{wishlist.add(id);if(el){el.classList.add('on');el.textContent='❤️';}toast('Disimpan ke wishlist ❤️');}
+  syncHearts();
+}
+function toggleWishCurrent(){
+  if(!current)return;
+  toggleWish(current.id,null);
+  document.getElementById('detail-heart-btn').innerHTML=wishlist.has(current.id)?'❤️ Tersimpan':'🤍 Simpan';
+}
+function syncHearts(){
+  renderHome();
+document.querySelectorAll('[data-img]').forEach(el=>{el.src=IMG(el.dataset.img);});
+  if(document.getElementById('screen-results').classList.contains('active'))applyFilters();
+  const w=document.getElementById('ps-wish');if(w)w.textContent=wishlist.size;
+}
+function acctTab(btn,tab){
+  document.querySelectorAll('.acct-menu button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.acct-pane').forEach(p=>p.style.display='none');
+  document.getElementById('pane-'+tab).style.display='block';
+  if(tab==='trips')renderProfileBookings();
+}
+function renderWishlist(){
+  const items=PROPS.filter(p=>wishlist.has(p.id));
+  document.getElementById('wishlist-cards').innerHTML=items.map(cardHTML).join('');
+  document.getElementById('wishlist-empty').style.display=items.length?'none':'block';
+  document.getElementById('wishlist-cards').style.display=items.length?'grid':'none';
+}
+
+/* ====================== DETAIL ====================== */
+const GAL_LABELS=['Tampilan Utama','Kamar','Fasilitas','Sekitar Lokasi'];
+function buildGallery(p){
+  // primary photo + 3 other Figma photos as extra views (prototype gallery)
+  const others=PROPS.filter(x=>x.id!==p.id).map(x=>x.img);
+  const imgs=[p.img,others[(p.id)%others.length],others[(p.id+3)%others.length],others[(p.id+6)%others.length]];
+  setGalleryMain(imgs[0],GAL_LABELS[0]);
+  document.getElementById('gallery-thumbs').innerHTML=imgs.map((im,i)=>
+    `<div class="th ${i===0?'on':''}" style="background-image:url('${IMG(im)}')" onclick="swapGallery(this,'${im}','${GAL_LABELS[i]}')"></div>`).join('');
+}
+function setGalleryMain(im,label){
+  document.getElementById('gallery-main').style.backgroundImage=`url('${IMG(im)}')`;
+  document.getElementById('gallery-tag').textContent=label;
+}
+function swapGallery(el,im,label){
+  document.querySelectorAll('#gallery-thumbs .th').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  setGalleryMain(im,label);
+}
+function openDetail(id){
+  current=PROPS.find(p=>p.id===id);
+  const p=current;
+  buildGallery(p);
+  document.getElementById('detail-heart-btn').innerHTML=wishlist.has(p.id)?'❤️ Tersimpan':'🤍 Simpan';
+  document.getElementById('d-type').textContent=TYPE_LABEL[p.type];
+  document.getElementById('d-name').textContent=p.name;
+  document.getElementById('d-meta').innerHTML=`<span class="stars">${'★'.repeat(p.star)}${'☆'.repeat(5-p.star)}</span> · ★ ${p.rating} (${p.reviews} ulasan) · 📍 ${LOC_LABEL[p.loc]} · ${p.dist} km dari pusat`;
+  document.getElementById('d-amen').innerHTML=p.amen.map(a=>`<div>${AM[a]}</div>`).join('');
+  document.getElementById('d-desc').textContent=p.desc;
+  document.getElementById('d-loc2').textContent=LOC_LABEL[p.loc];
+  document.getElementById('d-map').src='https://www.google.com/maps?q='+encodeURIComponent(LOC_LABEL[p.loc]+', Indonesia')+'&z=12&output=embed';
+  document.getElementById('d-price').innerHTML=`${rp(p.price)} <small>/malam</small>`;
+  document.getElementById('d-old').textContent=p.old>p.price?rp(p.old):'';
+  document.getElementById('room1').textContent=rp(p.price);
+  document.getElementById('room2').textContent=rp(Math.round(p.price*1.5/10000)*10000);
+  selRoomPrice=p.price;selRoomName='Deluxe Room';var _r1=document.getElementById('roomrow1'),_r2=document.getElementById('roomrow2');if(_r1)_r1.classList.add('sel');if(_r2)_r2.classList.remove('sel');
+  renderReviews(p);
+  initCalendar();
+  go('detail');
+}
+
+/* ====================== INTERACTIVE CALENDAR ====================== */
+const MONTHS=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const WD=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+let calView, selIn=null, selOut=null;
+const ymd=d=>d.toISOString().slice(0,10);
+const sameDay=(a,b)=>a&&b&&a.toDateString()===b.toDateString();
+function initCalendar(){
+  const t=new Date();t.setHours(0,0,0,0);
+  selIn=new Date(t); selOut=new Date(t.getTime()+2*864e5);
+  calView=new Date(t.getFullYear(),t.getMonth(),1);
+  syncCalInputs(); renderCal();
+}
+function calNav(delta){calView=new Date(calView.getFullYear(),calView.getMonth()+delta,1);renderCal();}
+function pickDate(d){
+  const t=new Date();t.setHours(0,0,0,0);
+  if(d<t)return;
+  if(!selIn||(selIn&&selOut)){selIn=d;selOut=null;}
+  else if(d>selIn){selOut=d;}
+  else{selIn=d;selOut=null;}
+  syncCalInputs();renderCal();
+}
+function syncCalInputs(){
+  document.getElementById('bk-in').value=selIn?ymd(selIn):'';
+  document.getElementById('bk-out').value=selOut?ymd(selOut):'';
+  const info=document.getElementById('cal-info');
+  if(selIn&&selOut){const n=Math.round((selOut-selIn)/864e5);info.innerHTML=`<b>${n} malam</b> · ${fmtDate(ymd(selIn))} → ${fmtDate(ymd(selOut))}`;}
+  else if(selIn){info.innerHTML=`Check-in <b>${fmtDate(ymd(selIn))}</b> · pilih check-out`;}
+  else{info.textContent='Klik tanggal check-in';}
+}
+function renderCal(){
+  const y=calView.getFullYear(),m=calView.getMonth();
+  const first=new Date(y,m,1).getDay();
+  const days=new Date(y,m+1,0).getDate();
+  const today=new Date();today.setHours(0,0,0,0);
+  let h=`<div class="cal-head"><button onclick="calNav(-1)">‹</button><span class="m">${MONTHS[m]} ${y}</span><button onclick="calNav(1)">›</button></div><div class="cal-grid">`;
+  h+=WD.map(w=>`<div class="wd">${w}</div>`).join('');
+  for(let i=0;i<first;i++)h+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=days;d++){
+    const cur=new Date(y,m,d);
+    let cls='cal-day';
+    if(cur<today)cls+=' muted';
+    if(sameDay(cur,selIn))cls+=' in';
+    if(sameDay(cur,selOut))cls+=' out';
+    if(selIn&&selOut&&cur>selIn&&cur<selOut)cls+=' range';
+    h+=`<div class="${cls}" onclick="pickDate(new Date(${y},${m},${d}))">${d}</div>`;
+  }
+  h+=`</div>`;
+  document.getElementById('cal').innerHTML=h;
+}
+
+/* ====================== REVIEWS ====================== */
+const REVIEW_POOL=[
+  {n:'Dewi Lestari',t:'Kamar bersih, staf ramah banget, dan lokasinya strategis. Pasti balik lagi!',r:5},
+  {n:'Andi Pratama',t:'Sarapannya enak dan variatif. View dari kamar juga bagus. Recommended.',r:5},
+  {n:'Siti Rahma',t:'Sesuai foto, nyaman untuk keluarga. Cuma check-in agak lama sedikit.',r:4},
+  {n:'Budi Santoso',t:'Pelayanan cepat, kasur empuk, Wi-Fi kencang. Worth the price.',r:5},
+  {n:'Maya Anggraini',t:'Tempatnya tenang dan asri. Cocok buat healing dari penatnya kota.',r:5},
+  {n:'Rizky Hidayat',t:'Overall oke, kolam renang bersih. Parkir agak terbatas pas weekend.',r:4},
+  {n:'Putri Maharani',t:'Desain interiornya cantik, instagramable! Kamar mandi luas dan bersih.',r:5},
+  {n:'Fajar Nugroho',t:'Lokasi dekat pusat kuliner. Staf membantu kasih rekomendasi tempat wisata.',r:4}
+];
+const initials=n=>n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();
+let allRev=false;
+const AGO=['2 hari lalu','1 minggu lalu','3 minggu lalu','1 bulan lalu','1 bulan lalu','2 bulan lalu','2 bulan lalu','3 bulan lalu'];
+function reviewHTML(rv,i){return `<div class="review"><div class="rh"><div class="rav">${initials(rv.n)}</div><div><div class="rn">${rv.n}</div><div class="rd">${AGO[i%AGO.length]}</div></div><div class="rstars">${'★'.repeat(rv.r)}${'☆'.repeat(5-rv.r)}</div></div><p>${rv.t}</p></div>`;}
+function toggleAllReviews(){
+  allRev=!allRev;
+  const btn=document.getElementById('btn-all-rev');
+  if(allRev){
+    document.getElementById('rev-list').innerHTML=REVIEW_POOL.map((rv,i)=>reviewHTML(rv,i)).join('');
+    btn.textContent='Tutup ulasan ↑';
+  } else { renderReviews(current); }
+}
+function renderReviews(p){
+  allRev=false; var _ab=document.getElementById('btn-all-rev'); if(_ab)_ab.textContent='Lihat semua ulasan →';
+  document.getElementById('rev-big').textContent=p.rating.toFixed(1);
+  document.getElementById('rev-stars').textContent='★'.repeat(Math.round(p.rating))+'☆'.repeat(5-Math.round(p.rating));
+  document.getElementById('rev-count').textContent=p.reviews+' ulasan';
+  // sub-scores derived around overall rating
+  const cats=[['Kebersihan',0.1],['Lokasi',-0.1],['Pelayanan',0.0],['Fasilitas',-0.2],['Nilai',0.15]];
+  document.getElementById('rev-bars').innerHTML=cats.map(([label,off])=>{
+    let v=Math.min(5,Math.max(3.8,p.rating+off));
+    const pct=(v/5*100).toFixed(0);
+    return `<div class="rev-bar"><span>${label}</span><div class="track"><div class="fill" style="width:${pct}%"></div></div><span class="vv">${v.toFixed(1)}</span></div>`;
+  }).join('');
+  // pick 3 reviews by property id
+  const start=(p.id*2)%REVIEW_POOL.length;
+  const picks=[0,1,2].map(i=>REVIEW_POOL[(start+i)%REVIEW_POOL.length]);
+  const ago=['2 hari lalu','1 minggu lalu','3 minggu lalu'];
+  document.getElementById('rev-list').innerHTML=picks.map((rv,i)=>
+    `<div class="review"><div class="rh"><div class="rav">${initials(rv.n)}</div><div><div class="rn">${rv.n}</div><div class="rd">${ago[i]}</div></div><div class="rstars">${'★'.repeat(rv.r)}${'☆'.repeat(5-rv.r)}</div></div><p>${rv.t}</p></div>`
+  ).join('');
+}
+
+/* ====================== BOOKING ====================== */
+function nightsBetween(a,b){const d=(new Date(b)-new Date(a))/864e5;return d>0?Math.round(d):1;}
+function fmtDate(s){if(!s)return '—';const d=new Date(s);return d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});}
+let selRoomPrice=0, selRoomName='Deluxe Room';
+function selectRoom(n){
+  const p=current; if(!p)return;
+  const price=n===1?p.price:Math.round(p.price*1.5/10000)*10000;
+  selRoomPrice=price; selRoomName=n===1?'Deluxe Room':'Executive Suite';
+  document.getElementById('roomrow1').classList.toggle('sel',n===1);
+  document.getElementById('roomrow2').classList.toggle('sel',n===2);
+  document.getElementById('d-price').innerHTML=rp(price)+' <small>/malam</small>';
+  toast('Kamar dipilih: '+selRoomName);
+}
+function startBooking(){
+  if(!current)return;
+  if(!isLoggedIn){pendingBook=true;toast('🔒 Login dulu untuk melanjutkan booking');go('login');return;}
+  const p=current;
+  const ci=document.getElementById('bk-in').value, co=document.getElementById('bk-out').value;
+  const nights=nightsBetween(ci,co);
+  const _pr=selRoomPrice||p.price; const sub=_pr*nights, tax=Math.round(sub*0.11), total=sub+tax;
+  current._book={ci,co,nights,sub,tax,total,price:_pr,room:selRoomName};
+  document.getElementById('bk-img').style.backgroundImage=`url('${IMG(p.img)}')`;
+  document.getElementById('bk-name').textContent=p.name;
+  document.getElementById('bk-loc').textContent=TYPE_LABEL[p.type]+' · '+LOC_LABEL[p.loc];
+  document.getElementById('sum-in').textContent=fmtDate(ci);
+  document.getElementById('sum-out').textContent=fmtDate(co);
+  document.getElementById('sum-nights').textContent=`${selRoomName}: ${rp(_pr)} × ${nights} malam`;
+  document.getElementById('sum-sub').textContent=rp(sub);
+  document.getElementById('sum-tax').textContent=rp(tax);
+  document.getElementById('sum-total').textContent=rp(total);
+  go('booking');
+}
+function fillPayment(){
+  const p=current, b=current._book;
+  document.getElementById('pay-img').style.backgroundImage=`url('${IMG(p.img)}')`;
+  document.getElementById('pay-name').textContent=p.name;
+  document.getElementById('pay-loc').textContent=TYPE_LABEL[p.type]+' · '+LOC_LABEL[p.loc];
+  document.getElementById('pay-nights').textContent=`${b.room}: ${rp(b.price)} × ${b.nights} malam`;
+  document.getElementById('pay-sub').textContent=rp(b.sub);
+  document.getElementById('pay-tax').textContent=rp(b.tax);
+  document.getElementById('pay-total').textContent=rp(b.total);
+}
+function selPay(el){
+  document.querySelectorAll('.pay').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('card-form').style.display=el.querySelector('.pl').textContent.includes('Kartu')?'block':'none';
+}
+function payNow(){
+  const p=current,b=current._book;
+  const guest=document.getElementById('bk-guest').value;
+  const methodEl=document.querySelector('.pay.sel .pl');
+  const method=methodEl?methodEl.textContent:'Kartu Kredit / Debit';
+  const code='RR-'+Math.floor(1000+Math.random()*9000);
+  bookings.unshift({prop:p,ci:b.ci,co:b.co,nights:b.nights,total:b.total,status:'confirmed',code:code,guest:guest,method:method});
+  // fill e-ticket
+  document.getElementById('cf-code').textContent=code;
+  document.getElementById('cf-img').style.backgroundImage=`url('${IMG(p.img)}')`;
+  document.getElementById('cf-name').textContent=p.name;
+  document.getElementById('cf-loc').textContent=TYPE_LABEL[p.type]+' · 📍 '+LOC_LABEL[p.loc];
+  document.getElementById('cf-stars').textContent='★'.repeat(p.star)+'☆'.repeat(5-p.star);
+  document.getElementById('cf-in').textContent=fmtDate(b.ci);
+  document.getElementById('cf-out').textContent=fmtDate(b.co)+' ('+b.nights+' malam)';
+  document.getElementById('cf-guest').textContent=guest;
+  document.getElementById('cf-method').textContent=method;
+  document.getElementById('cf-total').textContent=rp(b.total);
+  toast('🎉 Pembayaran berhasil!');
+  go('confirm');
+}
+
+/* ====================== BOOKINGS ====================== */
+function getBookings(){
+  return bookings.length?bookings:[
+    {prop:PROPS[2],ci:'2026-06-12',co:'2026-06-15',nights:3,total:4828500,status:'upcoming'},
+    {prop:PROPS[5],ci:'2026-03-02',co:'2026-03-04',nights:2,total:2842000,status:'done'}
+  ];
+}
+function bookingHTML(b){
+  const p=b.prop;
+  return `<div class="bk">
+    <div class="bimg" style="background-image:url('${IMG(p.img)}')"></div>
+    <div class="bbody">
+      <div style="display:flex;justify-content:space-between;align-items:start;gap:10px;">
+        <div><div style="font-weight:700;font-size:16px;">${p.name}</div><div style="font-size:12.5px;color:var(--muted);">${TYPE_LABEL[p.type]} · 📍 ${LOC_LABEL[p.loc]}</div></div>
+        <span class="status ${b.status}">${b.status==='confirmed'?'✓ Dikonfirmasi':b.status==='upcoming'?'⏳ Akan datang':'✓ Selesai'}</span>
+      </div>
+      <div style="font-size:13px;color:#4B5563;margin-top:8px;">📅 ${fmtDate(b.ci)} → ${fmtDate(b.co)} · ${b.nights} malam</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
+        <div style="font-weight:800;color:var(--ruby);font-size:16px;">${rp(b.total)}</div>
+        <div><button class="btn btn-ghost" style="padding:7px 14px;font-size:12px;margin-right:6px;" onclick="openDetail(${p.id})">Lihat</button><button class="btn btn-primary" style="padding:7px 14px;font-size:12px;" onclick="toast('Detail pesanan')">Kelola</button></div>
+      </div>
+    </div>
+  </div>`;
+}
+function renderBookings(){
+  document.getElementById('bookings-list').innerHTML=getBookings().map(bookingHTML).join('');
+}
+function renderProfileBookings(){
+  document.getElementById('profile-bookings').innerHTML=getBookings().map(bookingHTML).join('');
+}
+function renderProfile(){
+  document.getElementById('ps-trips').textContent=getBookings().length;
+  document.getElementById('ps-wish').textContent=wishlist.size;
+}
+
+/* ====================== SEARCH + FILTERS ====================== */
+function doSearch(){
+  const q=(document.getElementById('home-search').value||document.getElementById('hero-loc').value||'').trim();
+  go('results');
+  if(q){
+    // try match a location
+    const lk=Object.keys(LOC_LABEL).find(k=>LOC_LABEL[k].toLowerCase().includes(q.toLowerCase())||k.includes(q.toLowerCase()));
+    resetFilters(true);
+    if(lk){document.querySelectorAll('.f-loc').forEach(c=>c.checked=(c.value===lk));}
+    applyFilters();
+    toast('🔍 Mencari: '+q);
+  }
+}
+function filterByCategory(type){
+  go('results');
+  resetFilters(true);
+  document.querySelectorAll('.f-type').forEach(c=>c.checked=(c.value===type));
+  applyFilters();
+  toast('Kategori: '+TYPE_LABEL[type]);
+}
+function filterByDeal(deal){
+  go('results');
+  resetFilters(true);
+  sortMode='cheap';
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.textContent==='Termurah'));
+  if(deal==='weekend'){document.querySelectorAll('.f-type').forEach(c=>{if(['hotel','villa'].includes(c.value))c.checked=true;});setPrice(1000000);toast('💰 Weekend Getaway 30% — Hotel & Villa');}
+  else if(deal==='longstay'){document.querySelectorAll('.f-type').forEach(c=>{if(['hotel','villa','apart'].includes(c.value))c.checked=true;});toast('💰 Long Stay 25% — min. 5 malam');}
+  else if(deal==='earlybird'){toast('💰 Early Bird 20% — pesan 30 hari sebelum');}
+  else if(deal==='family'){document.querySelectorAll('.f-type').forEach(c=>{if(['hotel','resort'].includes(c.value))c.checked=true;});document.querySelectorAll('.f-am').forEach(c=>{if(['breakfast','pool'].includes(c.value))c.checked=true;});toast('💰 Family Package 25% — Hotel & Resort');}
+  applyFilters();
+}
+function setPrice(v){document.getElementById('f-price').value=v;document.getElementById('f-price-label').textContent=rp(v);}
+function onPrice(){setPrice(parseInt(document.getElementById('f-price').value,10));applyFilters();}
+function setSort(el,s){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');sortMode=s;applyFilters();}
+function resetFilters(silent){
+  document.querySelectorAll('.f-type,.f-loc,.f-am').forEach(c=>c.checked=false);
+  document.querySelector('input[name="f-rating"][value="0"]').checked=true;
+  setPrice(1800000);
+  if(!silent){sortMode='recommended';document.querySelectorAll('.chip').forEach((c,i)=>c.classList.toggle('active',i===0));applyFilters();toast('Filter direset');}
+}
+function applyFilters(){
+  const types=[...document.querySelectorAll('.f-type:checked')].map(c=>c.value);
+  const locs=[...document.querySelectorAll('.f-loc:checked')].map(c=>c.value);
+  const ams=[...document.querySelectorAll('.f-am:checked')].map(c=>c.value);
+  const minR=parseFloat(document.querySelector('input[name="f-rating"]:checked').value);
+  const maxP=parseInt(document.getElementById('f-price').value,10);
+
+  let rows=PROPS.filter(p=>
+    (types.length===0||types.includes(p.type)) &&
+    (locs.length===0||locs.includes(p.loc)) &&
+    (ams.length===0||ams.every(a=>p.amen.includes(a))) &&
+    p.rating>=minR && p.price<=maxP
+  );
+  rows.sort((a,b)=>{
+    if(sortMode==='cheap')return a.price-b.price;
+    if(sortMode==='rating')return b.rating-a.rating;
+    if(sortMode==='distance')return a.dist-b.dist;
+    return b.rating*1000 - b.reviews - (a.rating*1000 - a.reviews); // recommended
+  });
+
+  const list=document.getElementById('reslist');
+  list.innerHTML=rows.map(p=>{
+    const disc=p.old>p.price?`<span class="badge">-${Math.round((1-p.price/p.old)*100)}%</span>`:'';
+    return `<div class="resrow" onclick="openDetail(${p.id})">
+      <div class="rimg" style="background-image:url('${IMG(p.img)}')">${disc}</div>
+      <div class="rbody">
+        <div class="type" style="color:var(--gold);font-weight:700;font-size:11px;text-transform:uppercase;">${TYPE_LABEL[p.type]}</div>
+        <div class="rn">${p.name}</div>
+        <div style="font-size:13px;color:#374151;font-weight:600;">★ ${p.rating} <span style="color:var(--muted);font-weight:500;">(${p.reviews} ulasan) · ${'★'.repeat(p.star)}</span></div>
+        <div style="font-size:13px;color:var(--muted);">📍 ${LOC_LABEL[p.loc]} · ${p.dist} km dari pusat</div>
+        <div class="amlist">${p.amen.slice(0,4).map(a=>`<span>${AM[a]}</span>`).join('')}</div>
+      </div>
+      <div class="rright">
+        <div>${p.old>p.price?`<div class="old" style="font-size:12px;color:#9CA3AF;text-decoration:line-through;">${rp(p.old)}</div>`:''}<div style="font-weight:800;color:var(--ruby);font-size:18px;">${rp(p.price)}</div><div style="font-size:11px;color:var(--muted);">per malam</div></div>
+        <button class="btn btn-primary" style="padding:8px 14px;font-size:12px;" onclick="event.stopPropagation();openDetail(${p.id})">LIHAT DETAIL</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('res-count').textContent=rows.length;
+  document.getElementById('res-empty').style.display=rows.length?'none':'block';
+  list.style.display=rows.length?'flex':'none';
+
+  // active tags
+  const tags=[];
+  if(types.length)tags.push(types.map(t=>TYPE_LABEL[t]).join(', '));
+  if(locs.length)tags.push('📍 '+locs.map(l=>LOC_LABEL[l]).join(', '));
+  if(ams.length)tags.push(ams.map(a=>AM[a]).join(', '));
+  if(minR>0)tags.push('⭐ '+minR+'+');
+  if(maxP<1800000)tags.push('≤ '+rp(maxP));
+  document.getElementById('active-tags').innerHTML=tags.map(t=>`<span>🔖 ${t}</span>`).join('');
+}
+
+/* ====================== FORM VALIDATION ====================== */
+function validEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v||'').trim());}
+function fieldVal(id){const f=document.getElementById(id);const el=f.querySelector('input,select,textarea');return el?el.value.trim():'';}
+function setErr(id,bad){document.getElementById(id).classList.toggle('err',bad);}
+let isLoggedIn=false, pendingBook=false;
+function updateAuthUI(){
+  document.querySelectorAll('a.btn,button.btn').forEach(el=>{
+    const oc=el.getAttribute('onclick')||'';
+    if(oc.includes("go('login')")||oc.includes("go('signup')")) el.style.display=isLoggedIn?'none':'';
+  });
+}
+function doLogin(){
+  const eb=!validEmail(fieldVal('lf-email'));
+  const pb=fieldVal('lf-pass').length<6;
+  setErr('lf-email',eb);setErr('lf-pass',pb);
+  if(eb||pb){toast('⚠️ Periksa kembali data login');return;}
+  isLoggedIn=true;updateAuthUI();toast('Berhasil masuk! 👋');if(pendingBook){pendingBook=false;startBooking();}else{go('home');}
+}
+function doSignup(){
+  const nb=fieldVal('sf-name').length<2;
+  const eb=!validEmail(fieldVal('sf-email'));
+  const phb=fieldVal('sf-phone').replace(/\D/g,'').length<10;
+  const pb=fieldVal('sf-pass').length<8;
+  const tb=!document.querySelector('#sf-terms input').checked;
+  setErr('sf-name',nb);setErr('sf-email',eb);setErr('sf-phone',phb);setErr('sf-pass',pb);
+  document.getElementById('sf-terms').style.color=tb?'#DC2626':'#4B5563';
+  if(nb||eb||phb||pb||tb){toast('⚠️ Lengkapi form pendaftaran');return;}
+  isLoggedIn=true;updateAuthUI();toast('Akun berhasil dibuat! 🎉');if(pendingBook){pendingBook=false;startBooking();}else{go('home');}
+}
+function submitBooking(){
+  const f1=fieldVal('bf-fname')==='';
+  const f2=fieldVal('bf-lname')==='';
+  const eb=!validEmail(fieldVal('bf-email'));
+  const phb=fieldVal('bf-phone').replace(/\D/g,'').length<10;
+  setErr('bf-fname',f1);setErr('bf-lname',f2);setErr('bf-email',eb);setErr('bf-phone',phb);
+  if(f1||f2||eb||phb){toast('⚠️ Lengkapi data pemesan');return;}
+  fillPayment();go('payment');
+}
+
+/* ====================== AVATAR + STYLE GUIDE ====================== */
+function injectAvatars(){
+  document.querySelectorAll('.navlinks').forEach(nav=>{
+    if(!nav.querySelector('.avatar')){
+      const a=document.createElement('div');
+      a.className='avatar';a.title='Akun Saya';a.textContent='RM';
+      a.setAttribute('onclick',"go('profile')");
+      nav.appendChild(a);
+    }
+  });
+}
+function renderSGDemo(){document.getElementById('sg-card-demo').innerHTML=[PROPS[0],PROPS[8]].map(cardHTML).join('');}
+
+/* ====================== INIT ====================== */
+renderHome();
+injectAvatars();
+document.body.classList.add('show-botnav');
+document.querySelector('.botnav button[data-nav="home"]').classList.add('active');
+updateAuthUI();
+</script>
+</body>
+</html>
