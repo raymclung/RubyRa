@@ -4,7 +4,7 @@ Prototipe antarmuka pemesanan penginapan — hotel, villa, resort, guest house, 
 
 [Lihat demo](https://raymclung.github.io/RubyRa/)
 
-Ini prototipe antarmuka, bukan aplikasi yang benar-benar berjalan. Tidak ada server,
+Dibuat sebagai tugas kuliah. Ini prototipe antarmuka, bukan aplikasi yang benar-benar berjalan. Tidak ada server,
 tidak ada basis data. Data penginapannya ditulis langsung di dalam kode, dan pemesanan
 tidak tercatat di mana pun. Halaman masuknya pun hanya simulasi tampilan.
 
